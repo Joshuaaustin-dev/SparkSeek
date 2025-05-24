@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 //Route for GET requests defined in root URL '/'
 // When root is visited message will send
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send('Server is running!');
 });
 
