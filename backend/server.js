@@ -9,6 +9,21 @@ const app = express();
 //Use port from env or 5000
 const PORT = process.env.PORT || 5000;
 
+//Body parser for JSON
+app.use(express.json());
+
+//Routes
+const userRoutes = require('./routes/userRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const resumeRoutes = require('./routes/resumeRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+
+// Mount routes
+app.use('/api/users', userRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/resumes', resumeRoutes);
+app.use('/api/messages', messageRoutes);
+
 //Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('MongoDB connected successfully!'))
@@ -27,3 +42,4 @@ app.get('/api', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
