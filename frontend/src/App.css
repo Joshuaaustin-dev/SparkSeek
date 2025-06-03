@@ -5,6 +5,72 @@
   text-align: center;
 }
 
+.header {
+  background-color: #cbe3f5;
+  text-align: center;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  background-color: #d3e8f5;
+  max-width: 400px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(73, 132, 152, 0.2);
+}
+
+.login-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 90%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 2px solid #a3c9e2;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+button.login-button {
+  width: 100%;
+  background-color: #498498;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.login-button:hover {
+  background-color: #b02a2a;
+}
+
+.new-user-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #498498;
+  text-decoration: none;
+}
+
+.new-user-link:hover {
+  color: #b02a2a;
+  text-decoration: underline;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

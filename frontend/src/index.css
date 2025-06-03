@@ -24,15 +24,21 @@ a:hover {
 
 body {
   margin: 0;
+  height: 100%;
+  padding: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: "Oswald", sans-serif;
+  background-color: #f5f3ec;
+  color: #0c1317;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: #0c1317;
 }
 
 button {
