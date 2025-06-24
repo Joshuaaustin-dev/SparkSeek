@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Signup = ({ onSignupSuccess }) => {
+const Signup = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -9,6 +10,11 @@ const Signup = ({ onSignupSuccess }) => {
     confirmPassword: "",
     role: "seeker",
   });
+
+  const [message, setMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,25 +24,43 @@ const Signup = ({ onSignupSuccess }) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match");
+      setMessage("Passwords do not match");
+      setHasError(true);
       return;
     }
 
     try {
       await axios.post("/api/auth/signup", form);
-      onSignupSuccess(); // ✅ Navigate to login page
+      setMessage("Signup successful! Redirecting to login...");
+      setHasError(false);
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (err) {
-      alert("Signup failed, try again");
+      setMessage("Signup failed, please try again.");
+      setHasError(true);
     }
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
+    <div className="login-container">
+      <h2 className="login-title">Signup</h2>
+      {message && (
+        <div
+          className={`login-message ${hasError ? "error" : "success"}`}
+          style={{
+            color: hasError ? "red" : "green",
+            marginBottom: "1rem",
+            fontWeight: "bold",
+          }}
+        >
+          {message}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <input
           name="name"
-          placeholder="name"
+          placeholder="Name"
           value={form.name}
           onChange={handleChange}
           required
@@ -44,6 +68,7 @@ const Signup = ({ onSignupSuccess }) => {
         <br />
         <input
           name="email"
+          type="email"
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
@@ -52,7 +77,8 @@ const Signup = ({ onSignupSuccess }) => {
         <br />
         <input
           name="password"
-          placeholder="password"
+          type="password"
+          placeholder="Password"
           value={form.password}
           onChange={handleChange}
           required
@@ -60,7 +86,8 @@ const Signup = ({ onSignupSuccess }) => {
         <br />
         <input
           name="confirmPassword"
-          placeholder="confirm password"
+          type="password"
+          placeholder="Confirm Password"
           value={form.confirmPassword}
           onChange={handleChange}
           required
@@ -71,7 +98,16 @@ const Signup = ({ onSignupSuccess }) => {
           <option value="recruiter">Recruiter</option>
         </select>
         <br />
-        <button type="submit">Signup</button>
+        <button type="submit" className="login-button">
+          Signup
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="mt-6 w-full border border-blue-600 text-blue-600 font-semibold py-2 rounded-md hover:bg-blue-50 transition-colors"
+        >
+          Back to Login
+        </button>
       </form>
     </div>
   );
