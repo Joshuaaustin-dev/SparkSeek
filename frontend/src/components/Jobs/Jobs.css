@@ -1,0 +1,75 @@
+/* jobs.css */
+
+.jobs-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 10%;
+  font-family: Arial, sans-serif;
+  background-color: #f7f9fc;
+  min-height: 100vh;
+}
+
+.jobs-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.jobs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.job-card {
+  flex: 1 1 calc(50% - 2rem);
+  min-width: 100px;
+  max-width: 200px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.job-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.job-link {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0077cc;
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+}
+
+.job-company {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.job-location {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+.job-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 0.75rem;
+  border: 1px solid #eee;
+  align-self: start;
+}
