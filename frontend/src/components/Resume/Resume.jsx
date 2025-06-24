@@ -2,22 +2,34 @@ import { useState } from "react";
 import axios from "axios";
 
 function ParsedResumeView({ data }) {
-  if (!data || !data.data) return null;
-  console.log("Full resume parse data:", JSON.stringify(data, null, 2));
+  if (!data) return null;
 
   const resume = data.data;
 
-  // Extract top-level fields safely
-  const name = resume.name?.raw || "Candidate Name";
-  const email = resume.contactInformation?.emails?.[0] || "N/A";
-  const phone = resume.contactInformation?.phoneNumbers?.[0] || "N/A";
+  //return the user's name from the resume
+  const getFullName = () => resume.candidateName?.[0]?.raw || "Candidate Name";
 
-  // Work Experience is an array of objects with nested raw fields
-  const workExperience = resume.workExperience || [];
-  // Education similarly
-  const education = resume.education || [];
-  // Skills are objects with a name property
-  const skills = resume.skills?.map((skill) => skill.name) || [];
+  //return the user's email from the resume
+  const getEmail = () => {
+    if (!resume.email?.length) return "N/A";
+    return resume.email[0].parsed || resume.email[0].raw || "N/A";
+  };
+
+  //return the user's phone number from the resume
+  const getPhone = () => {
+    if (!resume.phoneNumber?.length) return "N/A";
+    const firstPhone = resume.phoneNumber[0];
+    if (typeof firstPhone.parsed === "string") return firstPhone.parsed;
+    if (firstPhone.parsed?.rawText) return firstPhone.parsed.rawText;
+    return firstPhone.raw || "N/A";
+  };
+
+  const getSkills = () => {
+    if (!resume.skill?.length) return [];
+    return resume.skill.map((skill) => skill.name || skill.raw || "");
+  };
+
+  const skills = getSkills();
 
   return (
     <div
@@ -28,44 +40,11 @@ function ParsedResumeView({ data }) {
         marginTop: 20,
       }}
     >
-      <h2>{name}</h2>
+      <h2>{getFullName()}</h2>
       <p>
-        <strong>Email:</strong> {email} <br />
-        <strong>Phone:</strong> {phone}
+        <strong>Email:</strong> {getEmail()} <br />
+        <strong>Phone:</strong> {getPhone()}
       </p>
-
-      <h3>Work Experience</h3>
-      {workExperience.length > 0 ? (
-        <ul>
-          {workExperience.map((job, i) => (
-            <li key={i} style={{ marginBottom: 10 }}>
-              <strong>{job.jobTitle?.raw || "No title"}</strong> at{" "}
-              {job.organization?.raw || "Unknown"} <br />
-              {job.dates?.startDate || "Unknown"} -{" "}
-              {job.dates?.endDate || "Present"} <br />
-              <em>{job.jobDescription?.raw || ""}</em>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No work experience listed.</p>
-      )}
-
-      <h3>Education</h3>
-      {education.length > 0 ? (
-        <ul>
-          {education.map((school, i) => (
-            <li key={i} style={{ marginBottom: 10 }}>
-              {school.accreditation?.inputStr || "Degree Unknown"} at{" "}
-              {school.organization?.raw || "Unknown"} <br />
-              Graduated: {school.dates?.completionDate || "N/A"}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No education listed.</p>
-      )}
-
       <h3>Skills</h3>
       {skills.length > 0 ? (
         <p>{skills.join(", ")}</p>
@@ -101,11 +80,8 @@ export default function ResumeUpload() {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Adjust URL if your backend is on a different port
       const response = await axios.post("/api/resumes", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Raw resume parse response:", response.data);
       setParsedData(response.data);
