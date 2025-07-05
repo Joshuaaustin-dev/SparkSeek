@@ -1,23 +1,38 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+        if (!isExpired) {
+          navigate("/dashboard");
+        } else {
+          localStorage.removeItem("token");
+        }
+      } catch {
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/auth/login", { email, password });
-      localStorage.setItem("token", response.data.token); // Save JWT token
+      localStorage.setItem("token", response.data.token);
+      onLogin();
 
-      // Show success message briefly before navigating
-      setMessage("Login successful! Redirecting...");
-      setHasError(false);
       setMessage("Login successful! Redirecting...");
       setHasError(false);
       setTimeout(() => {

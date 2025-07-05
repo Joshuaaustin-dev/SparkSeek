@@ -19,18 +19,38 @@ import "./App.css";
 
 function AppWrapper() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+
+        if (!isExpired) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        console.error("Invalid token", err);
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      }
+    }
+    setLoading(false);
   }, []);
 
   const handleSignupSuccess = () => {
     alert("Signup successful! Please log in.");
     navigate("/");
   };
+
+  if (loading) return <div>Loading...</div>; // 🔒 Wait before rendering routes
 
   return (
     <>
