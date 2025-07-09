@@ -11,10 +11,12 @@ const resumeModel = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
+    summary: String,
+    totalYearsWorked: String,
     skills: [String],
     education: [String],
     experience: [String],
-    summary: String
+    
   },
 
   //Match insights: TODO

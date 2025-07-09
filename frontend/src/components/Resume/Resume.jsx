@@ -5,6 +5,7 @@ function ParsedResumeView({ data }) {
   if (!data) return null;
 
   const resume = data.data;
+  console.log(resume);
 
   //return the user's name from the resume
   const getFullName = () => resume.candidateName?.[0]?.raw || "Candidate Name";
@@ -24,12 +25,70 @@ function ParsedResumeView({ data }) {
     return firstPhone.raw || "N/A";
   };
 
-  const getSkills = () => {
-    if (!resume.skill?.length) return [];
-    return resume.skill.map((skill) => skill.name || skill.raw || "");
+  const extractSkills = () => {
+    const skills =
+      resume.skill
+        ?.filter((skill) => skill.confidence >= 0.75)
+        .map((skill) => skill.raw)
+        .filter(Boolean)
+        .map((s) => s.trim().toLowerCase()) || [];
+
+    const languages =
+      resume.language
+        ?.map((lang) => lang.raw)
+        .filter(Boolean)
+        .map((l) => l.trim().toLowerCase()) || [];
+
+    // Combine both and deduplicate
+    return [...new Set([...skills, ...languages])];
   };
 
-  const skills = getSkills();
+  const extractEducation = () => {
+    return (
+      resume.education?.map((entry) => {
+        if (entry.raw) return entry.raw;
+
+        const degree = entry.degree || "";
+        const school = entry.institution || "";
+        const dates = `${entry.dateRange?.start || ""} – ${
+          entry.dateRange?.end || ""
+        }`;
+        return [degree, "at", school, `(${dates})`].filter(Boolean).join(" ");
+      }) ?? []
+    );
+  };
+
+  const extractExperience = () => {
+    return (
+      resume.workExperience?.map((entry) => {
+        // Use raw if structured fields are missing or empty
+        if (entry.raw) return entry.raw;
+
+        const job = entry.jobTitle || "";
+        const org = entry.organization || "";
+        const dates = `${entry.dateRange?.start || ""} – ${
+          entry.dateRange?.end || ""
+        }`;
+
+        // Only show structured version if there's at least a job or org
+        if (job || org) {
+          return [job, "at", org, `(${dates})`].filter(Boolean).join(" ");
+        }
+
+        return "Experience details unavailable";
+      }) ?? []
+    );
+  };
+
+  const extractYearsOfExperience = () =>
+    resume.totalYearsExperience?.parsed || "Not specified";
+
+  const extractSummary = () => resume.summary?.parsed || "Not specified";
+
+  const skills = extractSkills();
+  const education = extractEducation();
+  const experience = extractExperience();
+  const summary = extractSummary();
 
   return (
     <div
@@ -45,12 +104,44 @@ function ParsedResumeView({ data }) {
         <strong>Email:</strong> {getEmail()} <br />
         <strong>Phone:</strong> {getPhone()}
       </p>
+
       <h3>Skills</h3>
       {skills.length > 0 ? (
-        <p>{skills.join(", ")}</p>
+        <ul>
+          {skills.map((skill, i) => (
+            <li key={i}>{skill}</li>
+          ))}
+        </ul>
       ) : (
         <p>No skills listed.</p>
       )}
+
+      <h3>Education</h3>
+      {education.length > 0 ? (
+        <ul>
+          {education.map((edu, i) => (
+            <li key={i}>{edu}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No education history found.</p>
+      )}
+
+      <h3>Experience</h3>
+      <h3>Total Experience</h3>
+      <p>{extractYearsOfExperience()} years</p>
+      {experience.length > 0 ? (
+        <ul>
+          {experience.map((exp, i) => (
+            <li key={i}>{exp}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No work experience found.</p>
+      )}
+
+      <h3>Summary</h3>
+      <p>{summary}</p>
     </div>
   );
 }
