@@ -171,9 +171,16 @@ export default function ResumeUpload() {
       const formData = new FormData();
       formData.append("file", file);
 
+      //get the JWT token
+      const token = localStorage.getItem("token");
+
       const response = await axios.post("/api/resumes", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // Add this header!
+        },
       });
+
       console.log("Raw resume parse response:", response.data);
       setParsedData(response.data);
     } catch (err) {

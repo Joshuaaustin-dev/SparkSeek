@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const resumeModel = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  filePath: { type: String, required: true },
-  originalName: { type: String, required: true },
-  uploadDate: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, //user who uploaded it
+  filePath: { type: String, required: true }, //the file uploaded
+  originalName: { type: String, required: true }, // the name of the file
+  uploadDate: { type: Date, default: Date.now }, // when it was uploaded
 
   // Parsed fields from Resume uploads
   parsed: {
@@ -18,8 +18,6 @@ const resumeModel = new mongoose.Schema({
     experience: [String],
     
   },
-
-  //Match insights: TODO
   
 });
 
