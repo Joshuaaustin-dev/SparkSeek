@@ -5,19 +5,29 @@ const axios = require("axios");
 const auth = require("../middleware/authMiddleware");
 const FormData = require("form-data");
 const ResumeModel = require("../models/resumeModel");
-const fs = require("fs");
 
 //Multer disk storage
+const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // ensure this folder exists
-      },
-      filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-      },
-    });
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uploadDir = "uploads/";
+    const originalName = path.parse(file.originalname).name;
+    const ext = path.extname(file.originalname);
+    let filename = `${originalName}${ext}`;
+    let counter = 1;
+
+    // Check if file exists and increment suffix until it's unique
+    while (fs.existsSync(path.join(uploadDir, filename))) {
+      filename = `${originalName}(${counter})${ext}`;
+      counter++;
+    }
+
+    cb(null, filename);
+  },
+});
 
 const upload = multer({ storage }); 
 
@@ -103,6 +113,42 @@ router.post("/", auth, upload.single("file"), async (req, res) => {
   } catch (error) {
     console.error("Error during upload:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to upload document" });
+  }
+});
+
+
+//GET route to retrieve resumes of the authenticated user
+router.get("/", auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const resumes = await ResumeModel.find({ user: userId }).sort({ createdAt: -1 });
+
+    res.json(resumes); // these should already include originalName and createdAt
+  } catch (error) {
+    console.error("Error fetching resumes:", error.message);
+    res.status(500).json({ error: "Failed to load resumes" });
+  }
+});
+
+//Get route to retreive the preview of the file
+router.get("/:id/preview", auth, async (req, res) => {
+  try {
+    const resume = await ResumeModel.findById(req.params.id);
+
+    if (!resume) {
+      return res.status(404).json({ error: "Resume not found" });
+    }
+
+    const absolutePath = path.resolve(resume.filePath);
+
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    res.sendFile(absolutePath);
+  } catch (err) {
+    console.error("Error fetching resume preview:", err.message);
+    res.status(500).json({ error: "Failed to preview resume" });
   }
 });
 

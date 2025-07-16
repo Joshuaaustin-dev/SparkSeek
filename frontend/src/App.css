@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+.main-content {
+  padding-top: 100px;
+  margin-left: 200px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
 .header {
   background-color: #cbe3f5;
   text-align: center;

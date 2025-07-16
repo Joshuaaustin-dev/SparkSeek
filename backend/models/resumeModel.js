@@ -16,9 +16,8 @@ const resumeModel = new mongoose.Schema({
     skills: [String],
     education: [String],
     experience: [String],
-    
-  },
+  }
   
-});
+}, { timestamps: true});
 
 module.exports = mongoose.model('Resume', resumeModel);

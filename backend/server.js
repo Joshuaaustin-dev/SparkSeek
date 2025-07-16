@@ -6,6 +6,12 @@ const mongoose = require('mongoose'); //Mongoose to interact with MongoDB in an 
 //Create express application instance
 const app = express(); 
 
+//handle static files
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+
 //Use port from env or 5000
 const PORT = process.env.PORT || 5000;
 

@@ -13,7 +13,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import NavigationMenu from "./components/Navbar/NavigationMenu";
 import TopNav from "./components/Navbar/TopNav";
 import Profile from "./components/Profile/Profile";
-import Resume from "./components/Resume/Resume";
+import ResumeMain from "./components/Resume/ResumeMain";
 import Jobs from "./components/Jobs/Jobs";
 import "./App.css";
 
@@ -58,7 +58,7 @@ function AppWrapper() {
       {isAuthenticated && !["/", "/signup"].includes(location.pathname) && (
         <NavigationMenu />
       )}
-      <div>
+      <div className="main-content">
         <Routes>
           <Route
             path="/"
@@ -82,7 +82,9 @@ function AppWrapper() {
           />
           <Route
             path="/resume"
-            element={isAuthenticated ? <Resume /> : <Navigate to="/" replace />}
+            element={
+              isAuthenticated ? <ResumeMain /> : <Navigate to="/" replace />
+            }
           />
           <Route
             path="/jobs"
