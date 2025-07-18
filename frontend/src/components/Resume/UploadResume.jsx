@@ -33,7 +33,7 @@ export default function UploadResume({ onUpload, loading }) {
     handleFile(selectedFile);
   };
 
-  // Drag events
+  // Handle Drag events
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragOver(true);
@@ -51,7 +51,7 @@ export default function UploadResume({ onUpload, loading }) {
     handleFile(droppedFile);
   };
 
-  // Click on drag-drop area triggers file input click
+  // Click on drag-drop for file input click
   const handleAreaClick = () => {
     if (!loading) fileInputRef.current.click();
   };

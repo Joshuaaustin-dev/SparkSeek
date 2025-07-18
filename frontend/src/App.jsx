@@ -9,10 +9,10 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login/Login";
 import Signup from "./components/Login/Signup";
-import Dashboard from "./components/Dashboard/Dashboard";
+import DashboardMain from "./components/Dashboard/DashboardMain";
 import NavigationMenu from "./components/Navbar/NavigationMenu";
 import TopNav from "./components/Navbar/TopNav";
-import Profile from "./components/Profile/Profile";
+import ProfileMain from "./components/Profile/ProfileMain";
 import ResumeMain from "./components/Resume/ResumeMain";
 import Jobs from "./components/Jobs/Jobs";
 import "./App.css";
@@ -71,13 +71,13 @@ function AppWrapper() {
           <Route
             path="/dashboard"
             element={
-              isAuthenticated ? <Dashboard /> : <Navigate to="/" replace />
+              isAuthenticated ? <DashboardMain /> : <Navigate to="/" replace />
             }
           />
           <Route
             path="/profile"
             element={
-              isAuthenticated ? <Profile /> : <Navigate to="/" replace />
+              isAuthenticated ? <ProfileMain /> : <Navigate to="/" replace />
             }
           />
           <Route

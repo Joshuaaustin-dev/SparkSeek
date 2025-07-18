@@ -10,3 +10,6 @@ node_modules/
 # OS/IDE junk
 .DS_Store
 .vscode/
+
+#directories to ignore
+uploads/

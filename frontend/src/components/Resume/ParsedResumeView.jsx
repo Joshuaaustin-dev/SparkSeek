@@ -8,9 +8,6 @@ function ExperienceItem({ text }) {
   // Split into sentences by punctuation followed by space
   const sentences = text.split(/(?<=[.!?])\s+/).filter(Boolean);
 
-  // Helper: Join sentences without breaking words
-  const joinSentences = (arr) => arr.join(" ");
-
   // If text is short enough, just show it as paragraph or list
   if (text.length <= limit) {
     if (sentences.length > 1) {

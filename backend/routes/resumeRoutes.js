@@ -123,14 +123,14 @@ router.get("/", auth, async (req, res) => {
     const userId = req.user.id;
     const resumes = await ResumeModel.find({ user: userId }).sort({ createdAt: -1 });
 
-    res.json(resumes); // these should already include originalName and createdAt
+    res.json(resumes); 
   } catch (error) {
     console.error("Error fetching resumes:", error.message);
     res.status(500).json({ error: "Failed to load resumes" });
   }
 });
 
-//Get route to retreive the preview of the file
+//Get route to get the preview of the file
 router.get("/:id/preview", auth, async (req, res) => {
   try {
     const resume = await ResumeModel.findById(req.params.id);
