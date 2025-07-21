@@ -34,40 +34,44 @@ router.post('/', async (req, res) => {
 });
 
 // Update the user
-router.put('/updateUser', async (req, res) => {
+router.put('/updateUser', authMiddleware, async (req, res) => {
   try {
-    // You should get the user id from authenticated session or token
-    const userId = req.user.id; // or req.body.userId, etc.
+    const userId = req.user.id;
 
-    // Extract name and skills from request body
-    const { name, skills } = req.body;
+    const { name, bio, skills } = req.body;
 
-    if (!name && (!skills || skills.length === 0)) {
-      return res.status(400).json({ message: 'No data to update' });
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
     }
 
-    // Update the user document with new name and skills
+    const updateFields = {
+      name,
+      bio,
+    };
+
+    if (skills && Array.isArray(skills)) {
+      updateFields.skills = skills;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        ...(name && { name }),
-        ...(skills && skills.length > 0 && { skills }),
-      },
-      { new: true } // return the updated doc
+      updateFields,
+      { new: true }
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.json({
-      message: 'User updated successfully',
+      message: "User updated successfully",
       user: updatedUser,
     });
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
 
 module.exports = router;
