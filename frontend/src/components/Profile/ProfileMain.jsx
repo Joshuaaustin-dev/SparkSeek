@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-import ProfileHeader from "./ProfileHeader";
 import ResumeSection from "./ResumeSection";
 import JobSeekerDetails from "./JobSeekerDetails";
 import ProfileEditForm from "./ProfileEditForm";
+import "./ProfileMain.css";
 
 const DEFAULT_PROFILE_PIC = "/profilePlaceholder.jpg";
 
@@ -50,39 +49,34 @@ const ProfileMain = () => {
 
   if (!user)
     return (
-      <p className="text-center mt-10 text-gray-500">Loading Profile...</p>
+      <div className="text-center mt-5 text-muted">Loading Profile...</div>
     );
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      {/* Profile Picture + Basic Info */}
-      <div className="flex flex-col items-center md:flex-row md:items-start md:space-x-6 mb-8">
-        <img
-          src={user.profilePictureUrl || DEFAULT_PROFILE_PIC}
-          alt="Profile"
-          className="w-32 h-32 rounded-full object-cover border-2 border-gray-300 shadow"
-        />
-        <div className="text-center md:text-left mt-4 md:mt-0">
-          <h1 className="text-3xl font-bold text-gray-800">{user.name}</h1>
-          <p className="text-gray-600">{user.email}</p>
-          <span className="inline-block mt-2 text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-          </span>
-        </div>
-      </div>
+    <div className="container mt-5">
+      <div className="profile-card">
+        <div className="card-body">
+          {/* Top Row */}
+          <div className="row align-items-center mb-4">
+            <div className="col-md-3 text-center">
+              <img
+                src={user.profilePictureUrl || DEFAULT_PROFILE_PIC}
+                alt="Profile"
+                className="profile-img"
+              />
+            </div>
+            <div className="col-md-9 text-center text-md-start">
+              <h2 className="fw-bold">{user.name}</h2>
+              <p className="text-muted mb-1">{user.email}</p>
+              <span className="badge bg-primary">
+                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              </span>
+            </div>
+          </div>
 
-      {/* Editable or Display Mode */}
-      {isEditing ? (
-        <ProfileEditForm
-          user={user}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
-      ) : (
-        <>
-          {/* About Section */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">About</h2>
+          {/* Sections */}
+          <div className="profile-section">
+            <h4>About</h4>
             {user.role === "seeker" ? (
               <JobSeekerDetails bio={user.bio} setBio={() => {}} />
             ) : (
@@ -97,22 +91,20 @@ const ProfileMain = () => {
             )}
           </div>
 
-          {/* Resume Section */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
+          <div className="profile-section">
             <ResumeSection skills={skills} resumeUrl={resumeUrl} />
           </div>
 
-          {/* Edit Button */}
-          <div className="flex justify-end">
+          <div className="text-end">
             <button
+              className="btn btn-primary btn-edit-profile"
               onClick={() => setIsEditing(true)}
-              className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition"
             >
               Edit Profile
             </button>
           </div>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,12 +1,4 @@
-@import "tailwindcss";
-
-body {
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  background-color: #f3f4f6;
-  color: #22223b;
-  margin: 0;
-  padding: 0;
-}
+/* App.css — keep only layout/component-specific styles */
 
 #root {
   max-width: 1280px;
@@ -20,27 +12,27 @@ body {
   box-sizing: border-box;
   background: #fff;
   border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(73, 132, 152, 0.12);
+  box-shadow: 0 8px 32px rgba(64, 131, 155, 0.12);
 }
 
 .header {
-  background-color: #e0f2fe;
+  background-color: var(--color-main);
   text-align: left;
   padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   border-radius: 1rem 1rem 0 0;
-  box-shadow: 0 2px 8px rgba(73, 132, 152, 0.08);
+  box-shadow: 0 2px 8px rgba(64, 131, 155, 0.08);
 }
 
 .login-container {
-  background-color: #f8fafc;
+  background-color: #ffffff;
   max-width: 400px;
   margin: 3rem auto;
   padding: 2rem 2.5rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 24px rgba(73, 132, 152, 0.15);
+  box-shadow: 0 4px 24px rgba(64, 131, 155, 0.15);
 }
 
 .login-title {
@@ -48,7 +40,6 @@ body {
   text-align: center;
   margin-bottom: 1.5rem;
   font-weight: 700;
-  color: #22223b;
 }
 
 input,
@@ -56,36 +47,16 @@ select {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  border: 2px solid #a3c9e2;
+  border: 2px solid var(--color-secondary);
   border-radius: 0.5rem;
   font-size: 1rem;
   background: #f1f5f9;
   transition: border-color 0.2s;
 }
-
 input:focus,
 select:focus {
-  border-color: #498498;
+  border-color: var(--color-tertiary);
   outline: none;
-}
-
-button.login-button {
-  width: 100%;
-  background-color: #2563eb;
-  color: white;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(73, 132, 152, 0.08);
-}
-
-button.login-button:hover {
-  background-color: #1e40af;
-  box-shadow: 0 4px 16px rgba(73, 132, 152, 0.15);
 }
 
 .new-user-link {
@@ -93,17 +64,15 @@ button.login-button:hover {
   text-align: center;
   margin-top: 1rem;
   font-size: 1rem;
-  color: #2563eb;
+  color: var(--color-tertiary);
   text-decoration: none;
   transition: color 0.2s;
 }
-
 .new-user-link:hover {
-  color: #b02a2a;
+  color: var(--color-accent);
   text-decoration: underline;
 }
 
-/* styling for the logo*/
 .logo {
   height: 5em;
   padding: 1em;
@@ -111,21 +80,16 @@ button.login-button:hover {
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #2563eb88);
+  filter: drop-shadow(0 0 2em rgba(175, 30, 35, 0.4));
 }
 
 .card {
   padding: 2em;
   background: #fff;
   border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(73, 132, 152, 0.08);
+  box-shadow: 0 2px 8px rgba(64, 131, 155, 0.08);
 }
 
-.read-the-docs {
-  color: #888;
-}
-
-/*customized scrollbar*/
 ::-webkit-scrollbar {
   width: 8px;
   background: #e5e7eb;

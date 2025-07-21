@@ -50,16 +50,16 @@ function AppWrapper() {
     navigate("/");
   };
 
-  if (loading) return <div>Loading...</div>; // 🔒 Wait before rendering routes
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <main className="flex-1 overflow-y-auto bg-gray-100 p-6 pt-20 pl-52">
+    <main className="main-container">
       {isAuthenticated && <TopNav />}
       <div className="flex flex-1 overflow-hidden">
         {isAuthenticated && !["/", "/signup"].includes(location.pathname) && (
           <NavigationMenu />
         )}
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-6 mt-20 ml-52">
+        <div className="bg-blue-300 mt-5 p-4">
           <Routes>
             <Route
               path="/"
@@ -96,7 +96,7 @@ function AppWrapper() {
               element={isAuthenticated ? <Jobs /> : <Navigate to="/" replace />}
             />
           </Routes>
-        </main>
+        </div>
       </div>
     </main>
   );
