@@ -7,6 +7,16 @@
   --color-bg: #f4f1e9;
 }
 
+/*Dark Theme*/
+[data-theme="dark"] {
+  --color-main: #1c2730;
+  --color-secondary: #27323c;
+  --color-text: #e5ebef;
+  --color-tertiary: #4fa0b9;
+  --color-accent: #f14545;
+  --color-bg: #12181f;
+}
+
 body {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   background-color: var(--color-bg);

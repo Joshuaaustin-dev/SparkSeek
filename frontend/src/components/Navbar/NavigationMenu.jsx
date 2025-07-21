@@ -1,18 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaFileAlt,
   FaUser,
   FaSignOutAlt,
-  FaEnvelope,
+  FaCommentDots,
   FaBell,
   FaMoon,
+  FaSun,
   FaBriefcase,
 } from "react-icons/fa";
+import useDarkMode from "./useDarkMode";
 import "./NavigationMenu.css";
 
 const NavigationMenu = () => {
   const navigate = useNavigate();
+  const { theme, toggle } = useDarkMode();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -23,24 +26,24 @@ const NavigationMenu = () => {
     <div className="sidebar">
       <ul className="nav-links">
         <li>
-          <Link to="/dashboard">
+          <NavLink to="/dashboard">
             <FaTachometerAlt /> Dashboard
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/resume">
+          <NavLink to="/resume">
             <FaFileAlt /> Resume
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/jobs">
+          <NavLink to="/jobs">
             <FaBriefcase /> Jobs
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/profile">
+          <NavLink to="/profile">
             <FaUser /> Profile
-          </Link>
+          </NavLink>
         </li>
         <li>
           <button onClick={handleLogout}>
@@ -49,13 +52,22 @@ const NavigationMenu = () => {
         </li>
       </ul>
       <div className="sidebar-tools">
-        <FaEnvelope className="tool-icon" title="Messages" />
+        <FaCommentDots className="tool-icon" title="Messages" />
         <FaBell className="tool-icon" title="Notifications" />
-        <FaMoon
-          className="tool-icon"
-          title="Toggle Dark Mode"
-          onClick={() => console.log("Toggle dark mode")}
-        />
+        {/* moon ⇄ sun icon switches with theme */}
+        {theme === "light" ? (
+          <FaMoon
+            className="tool-icon"
+            title="Switch to dark mode"
+            onClick={toggle}
+          />
+        ) : (
+          <FaSun
+            className="tool-icon"
+            title="Switch back to light mode"
+            onClick={toggle}
+          />
+        )}
       </div>
     </div>
   );
