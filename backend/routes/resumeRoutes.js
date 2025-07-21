@@ -152,4 +152,31 @@ router.get("/:id/preview", auth, async (req, res) => {
   }
 });
 
+// GET the most recent resume
+router.get('/latest/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const resume = await ResumeModel.findOne({ user: userId })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    if (!resume) {
+      return res.status(404).json({ message: 'No resume found for this user' });
+    }
+
+    // Extract top 10 skills
+    const topSkills = (resume.parsed.skills || []).slice(0, 10);
+
+    res.json({
+      skills: topSkills,
+      resumeUrl: resume.filePath,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 module.exports = router;

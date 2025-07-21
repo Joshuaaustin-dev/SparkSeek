@@ -1,17 +1,17 @@
-const JobSeekerDetails = ({ bio, setBio }) => (
-  <div className="mb-6">
-    <h3 className="text-xl font-semibold mb-2">Job Seeker Details</h3>
-    <label className="block mb-1 font-semibold" htmlFor="bio">
-      Bio:
-    </label>
-    <textarea
-      id="bio"
-      value={bio}
-      onChange={(e) => setBio(e.target.value)}
-      rows={4}
-      className="w-full border border-gray-300 rounded p-2"
-      placeholder="Write something about yourself..."
-    />
+const JobSeekerDetails = ({ bio }) => (
+  <div className="mb-5">
+    <div
+      aria-label="Bio"
+      style={{
+        padding: "0.375rem 0.75rem", // similar padding to form-control
+        backgroundColor: "transparent",
+        minHeight: "100px",
+        fontSize: "1rem",
+        whiteSpace: "pre-wrap",
+      }}
+    >
+      {bio || "Write something about yourself..."}
+    </div>
   </div>
 );
 
