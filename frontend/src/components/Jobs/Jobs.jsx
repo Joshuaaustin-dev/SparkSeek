@@ -2,14 +2,30 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import "./jobs.css";
 
+const JobCardSkeleton = () => (
+  <div className="job-card skeleton">
+    <div className="skeleton-title shimmer" />
+    <div className="skeleton-company shimmer" />
+    <div className="skeleton-logo shimmer" />
+    <div className="skeleton-location shimmer" />
+  </div>
+);
+
 function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // Filters
+  const [query, setQuery] = useState("");
+  const [location, setLocation] = useState("");
+  const [remoteOnly, setRemoteOnly] = useState(false);
+  const [employmentType, setEmploymentType] = useState("");
+  const [datePosted, setDatePosted] = useState("");
+
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const observer = useRef();
 
   const lastJobRef = useCallback(
@@ -23,7 +39,7 @@ function Jobs() {
           }
         },
         {
-          rootMargin: "500px", // Preload next page before hitting bottom
+          rootMargin: "500px",
         }
       );
       if (node) observer.current.observe(node);
@@ -33,6 +49,8 @@ function Jobs() {
 
   useEffect(() => {
     const fetchJobs = async () => {
+      const searchTerm = query.trim() || "developer"; // fallback default
+
       setLoading(true);
       setError("");
 
@@ -41,9 +59,13 @@ function Jobs() {
           method: "GET",
           url: "https://jsearch.p.rapidapi.com/search",
           params: {
-            query: "software engineer",
+            query: searchTerm,
+            location: location.trim() || undefined,
+            remote_jobs_only: remoteOnly ? "true" : undefined,
+            employment_types: employmentType || undefined,
+            date_posted: datePosted || undefined,
             num_pages: "1",
-            page: page.toString(), // pass current page
+            page: page.toString(),
           },
           headers: {
             "X-RapidAPI-Key":
@@ -66,9 +88,8 @@ function Jobs() {
     };
 
     fetchJobs();
-  }, [page]);
+  }, [page, query, location, remoteOnly, employmentType, datePosted]);
 
-  //Scroll-to-top button visibility
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
@@ -78,82 +99,123 @@ function Jobs() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setJobs([]);
+    setPage(1);
+    setHasMore(true);
+  };
+
   return (
     <div className="jobs-container">
-      <h2 className="jobs-title">🔥 Software Engineering Jobs</h2>
+      <h2 className="jobs-title">🔥 Discover Your Spark!</h2>
 
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      <form className="jobs-search" onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search job titles..."
+          className="search-input"
+        />
 
-      <div className="jobs-grid">
-        {jobs.map((job, index) => {
-          if (jobs.length === index + 1) {
-            // Attach observer to the last job card
-            return (
-              <div key={job.job_id} ref={lastJobRef} className="job-card">
-                <a
-                  href={job.job_apply_link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="job-link"
-                >
-                  {job.job_title}
-                </a>
-                <div className="job-company">{job.employer_name}</div>
-                {job.employer_logo && (
-                  <img
-                    src={job.employer_logo}
-                    alt="Employer logo"
-                    className="job-logo"
-                  />
-                )}
-                <div className="job-location">
-                  {job.job_city}, {job.job_country}
-                </div>
-              </div>
-            );
-          } else {
-            return (
-              <div key={job.job_id} className="job-card">
-                <a
-                  href={job.job_apply_link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="job-link"
-                >
-                  {job.job_title}
-                </a>
-                <div className="job-company">{job.employer_name}</div>
-                {job.employer_logo && (
-                  <img
-                    src={job.employer_logo}
-                    alt="Employer logo"
-                    className="job-logo"
-                  />
-                )}
-                <div className="job-location">
-                  {job.job_city}, {job.job_country}
-                </div>
-              </div>
-            );
-          }
-        })}
-      </div>
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location (e.g., Remote or New York)"
+          className="search-input"
+        />
 
-      {loading && (
-        <div className="jobs-grid">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="job-card skeleton">
-              <div className="skeleton-title shimmer" />
-              <div className="skeleton-company shimmer" />
-              <div className="skeleton-logo shimmer" />
-              <div className="skeleton-location shimmer" />
-            </div>
-          ))}
+        <select
+          value={employmentType}
+          onChange={(e) => setEmploymentType(e.target.value)}
+          className="filter-select"
+        >
+          <option value="">Any Type</option>
+          <option value="FULLTIME">Full-time</option>
+          <option value="PARTTIME">Part-time</option>
+          <option value="CONTRACTOR">Contract</option>
+          <option value="INTERN">Internship</option>
+        </select>
+
+        <select
+          value={datePosted}
+          onChange={(e) => setDatePosted(e.target.value)}
+          className="filter-select"
+        >
+          <option value="">Any Date</option>
+          <option value="today">Last 24 hours</option>
+          <option value="3days">Last 3 days</option>
+          <option value="week">Last 7 days</option>
+          <option value="month">Last 30 days</option>
+        </select>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <input
+            type="checkbox"
+            checked={remoteOnly}
+            onChange={(e) => setRemoteOnly(e.target.checked)}
+          />
+          Remote Only
+        </label>
+
+        <button type="submit" className="search-button">
+          Search
+        </button>
+      </form>
+
+      {error && (
+        <div className="jobs-error">
+          <p>{error}</p>
+          <button onClick={() => setPage((p) => p)}>Retry</button>
         </div>
       )}
 
-      {!hasMore && (
-        <p style={{ textAlign: "center", color: "#888" }}>
+      <div className="jobs-grid">
+        {jobs.map((job, index) => {
+          const JobCardContent = (
+            <>
+              <div className="job-header">
+                <h3 className="job-title">{job.job_title}</h3>
+                {job.employer_logo && (
+                  <img
+                    src={job.employer_logo}
+                    alt={job.employer_name || "Employer logo"}
+                    className="job-logo"
+                  />
+                )}
+              </div>
+              <div className="job-company">{job.employer_name}</div>
+              <div className="job-location">
+                {job.job_city || "Remote"}, {job.job_country}
+              </div>
+              {job.job_employment_type && (
+                <div className="job-type">{job.job_employment_type}</div>
+              )}
+            </>
+          );
+
+          return (
+            <a
+              key={job.job_id}
+              href={job.job_apply_link}
+              target="_blank"
+              rel="noreferrer"
+              className="job-card"
+              ref={jobs.length === index + 1 ? lastJobRef : null}
+            >
+              {JobCardContent}
+            </a>
+          );
+        })}
+
+        {loading &&
+          Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)}
+      </div>
+
+      {!loading && !hasMore && (
+        <p className="jobs-end-message">
           🎉 You've reached the end of job listings.
         </p>
       )}
@@ -162,6 +224,7 @@ function Jobs() {
         <button
           className="scroll-to-top"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll to top"
         >
           ↑
         </button>
