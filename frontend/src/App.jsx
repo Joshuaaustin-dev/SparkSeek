@@ -53,46 +53,52 @@ function AppWrapper() {
   if (loading) return <div>Loading...</div>; // 🔒 Wait before rendering routes
 
   return (
-    <>
+    <main className="flex-1 overflow-y-auto bg-gray-100 p-6 pt-20 pl-52">
       {isAuthenticated && <TopNav />}
-      {isAuthenticated && !["/", "/signup"].includes(location.pathname) && (
-        <NavigationMenu />
-      )}
-      <div className="main-content">
-        <Routes>
-          <Route
-            path="/"
-            element={<Login onLogin={() => setIsAuthenticated(true)} />}
-          />
-          <Route
-            path="/signup"
-            element={<Signup onSignupSuccess={handleSignupSuccess} />}
-          />
-          <Route
-            path="/dashboard"
-            element={
-              isAuthenticated ? <DashboardMain /> : <Navigate to="/" replace />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              isAuthenticated ? <ProfileMain /> : <Navigate to="/" replace />
-            }
-          />
-          <Route
-            path="/resume"
-            element={
-              isAuthenticated ? <ResumeMain /> : <Navigate to="/" replace />
-            }
-          />
-          <Route
-            path="/jobs"
-            element={isAuthenticated ? <Jobs /> : <Navigate to="/" replace />}
-          />
-        </Routes>
+      <div className="flex flex-1 overflow-hidden">
+        {isAuthenticated && !["/", "/signup"].includes(location.pathname) && (
+          <NavigationMenu />
+        )}
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-6 mt-20 ml-52">
+          <Routes>
+            <Route
+              path="/"
+              element={<Login onLogin={() => setIsAuthenticated(true)} />}
+            />
+            <Route
+              path="/signup"
+              element={<Signup onSignupSuccess={handleSignupSuccess} />}
+            />
+            <Route
+              path="/dashboard"
+              element={
+                isAuthenticated ? (
+                  <DashboardMain />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                isAuthenticated ? <ProfileMain /> : <Navigate to="/" replace />
+              }
+            />
+            <Route
+              path="/resume"
+              element={
+                isAuthenticated ? <ResumeMain /> : <Navigate to="/" replace />
+              }
+            />
+            <Route
+              path="/jobs"
+              element={isAuthenticated ? <Jobs /> : <Navigate to="/" replace />}
+            />
+          </Routes>
+        </main>
       </div>
-    </>
+    </main>
   );
 }
 
