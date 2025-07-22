@@ -53,8 +53,10 @@ const NavigationMenu = () => {
       </ul>
       <div className="sidebar-tools">
         <FaThumbsUp className="tool-icon" title="Notifications" />
-        <FaCommentDots className="tool-icon" title="Messages" />
-        {/* moon ⇄ sun icon switches with theme */}
+        <NavLink to="/messages">
+          <FaCommentDots className="tool-icon" title="Messages" />
+        </NavLink>{" "}
+        {/* moon/sun icon switches with theme */}
         {theme === "light" ? (
           <FaMoon
             className="tool-icon"

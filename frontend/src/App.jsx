@@ -15,6 +15,8 @@ import TopNav from "./components/Navbar/TopNav";
 import ProfileMain from "./components/Profile/ProfileMain";
 import ResumeMain from "./components/Resume/ResumeMain";
 import Jobs from "./components/Jobs/Jobs";
+import MessagingWindow from "./components/Messaging/MessagingWindow";
+import MessagingPage from "./components/Messaging/MessagingPage";
 import "./App.css";
 
 function AppWrapper() {
@@ -95,6 +97,9 @@ function AppWrapper() {
               path="/jobs"
               element={isAuthenticated ? <Jobs /> : <Navigate to="/" replace />}
             />
+            <Route path="/messages" element={<MessagingWindow />} />
+
+            <Route path="/messages/:otherUserId" element={<MessagingPage />} />
           </Routes>
         </div>
       </div>
