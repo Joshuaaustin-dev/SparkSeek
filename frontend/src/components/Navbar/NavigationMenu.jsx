@@ -5,7 +5,7 @@ import {
   FaUser,
   FaSignOutAlt,
   FaCommentDots,
-  FaBell,
+  FaThumbsUp,
   FaMoon,
   FaSun,
   FaBriefcase,
@@ -52,8 +52,8 @@ const NavigationMenu = () => {
         </li>
       </ul>
       <div className="sidebar-tools">
+        <FaThumbsUp className="tool-icon" title="Notifications" />
         <FaCommentDots className="tool-icon" title="Messages" />
-        <FaBell className="tool-icon" title="Notifications" />
         {/* moon ⇄ sun icon switches with theme */}
         {theme === "light" ? (
           <FaMoon

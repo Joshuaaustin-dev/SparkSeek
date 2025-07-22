@@ -24,7 +24,6 @@ function Jobs() {
   const [datePosted, setDatePosted] = useState("");
 
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
 
   // Fetch jobs when the user clicks Search
   const handleSearch = async (e) => {
