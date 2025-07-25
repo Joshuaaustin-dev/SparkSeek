@@ -1,10 +1,12 @@
 .profile-card {
   border-radius: 12px;
+  background-color: var(--color-background);
+  color: var(--color-text);
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .profile-card:hover {
-  box-shadow: 0 8px 24px rgba(64, 131, 155, 0.15); /* you can keep this or use rgba of your primary */
+  box-shadow: 0 8px 24px rgba(0, 123, 255, 0.15);
   transform: translateY(-4px);
 }
 
@@ -21,14 +23,22 @@
   box-shadow: 0 6px 20px var(--color-accent);
 }
 
+.profile-section {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-primary);
+}
+
 .profile-section h4 {
   font-weight: 700;
   color: var(--color-secondary);
+  border-color: var(--color-secondary);
 }
 
 .btn-edit-profile {
   font-weight: 600;
   border-radius: 8px;
+  background-color: var(--color-primary);
+  color: #fff;
   box-shadow: 0 4px 12px var(--color-primary);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }

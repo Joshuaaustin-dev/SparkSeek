@@ -1,0 +1,115 @@
+.job-info-card {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #0077cc;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.job-header {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.employer-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.job-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+}
+
+.employer-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.employer-website {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #0077cc;
+  text-decoration: underline;
+}
+
+.job-key-info p {
+  margin: 0.25rem 0;
+}
+
+.job-description,
+.job-highlights {
+  margin-top: 1.5rem;
+}
+
+.job-description h3,
+.job-highlights h3 {
+  border-bottom: 2px solid #0077cc;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.75rem;
+  color: #0077cc;
+}
+
+.apply-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.apply-button {
+  background-color: #0077cc;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.apply-button:hover,
+.apply-button:focus {
+  background-color: #005fa3;
+  outline: none;
+}
+
+.toggle-section p {
+  white-space: pre-wrap;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  color: #0077cc;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 0.25rem;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.toggle-button:hover,
+.toggle-button:focus {
+  text-decoration: underline;
+  outline: none;
+}

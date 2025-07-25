@@ -5,7 +5,7 @@ import {
   FaUser,
   FaSignOutAlt,
   FaCommentDots,
-  FaThumbsUp,
+  FaUsers,
   FaMoon,
   FaSun,
   FaBriefcase,
@@ -19,6 +19,16 @@ const NavigationMenu = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+
+    //remove job search filters
+    localStorage.removeItem("jobs_query");
+    localStorage.removeItem("jobs_location");
+    localStorage.removeItem("jobs_remoteOnly");
+    localStorage.removeItem("jobs_employmentType");
+    localStorage.removeItem("jobs_datePosted");
+    localStorage.removeItem("jobs_experience");
+    localStorage.removeItem("jobs_results");
+
     navigate("/");
   };
 
@@ -31,6 +41,11 @@ const NavigationMenu = () => {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/profile">
+            <FaUser /> Profile
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/resume">
             <FaFileAlt /> Resume
           </NavLink>
@@ -40,11 +55,7 @@ const NavigationMenu = () => {
             <FaBriefcase /> Jobs
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/profile">
-            <FaUser /> Profile
-          </NavLink>
-        </li>
+
         <li>
           <button onClick={handleLogout}>
             <FaSignOutAlt /> Log Out
@@ -52,7 +63,7 @@ const NavigationMenu = () => {
         </li>
       </ul>
       <div className="sidebar-tools">
-        <FaThumbsUp className="tool-icon" title="Notifications" />
+        <FaUsers className="tool-icon" title="Notifications" />
         <NavLink to="/messages">
           <FaCommentDots className="tool-icon" title="Messages" />
         </NavLink>{" "}

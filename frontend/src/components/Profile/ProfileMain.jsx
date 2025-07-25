@@ -14,28 +14,13 @@ const ProfileMain = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    //fetch user information
     const fetchUser = async () => {
       try {
         const userRes = await axios.get("/api/users/profile", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setUser(userRes.data);
-
-        // Fetch latest resume for that user
-        if (userRes.data && userRes.data._id) {
-          const resumeRes = await axios.get(
-            `/api/resumes/latest/${userRes.data._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-
-          setSkills(resumeRes.data.skills || []);
-          setResumeUrl(resumeRes.data.resumeUrl || "");
-        }
+        setSkills(userRes.data.skills || []);
       } catch (error) {
         console.error(error);
       }
@@ -45,11 +30,13 @@ const ProfileMain = () => {
 
   const handleSave = async (updatedData) => {
     try {
-      await axios.put("/api/users/updateUser", updatedData, {
+      const res = await axios.put("/api/users/updateUser", updatedData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      setUser((prev) => ({ ...prev, ...updatedData }));
+      const updatedUser = res.data.user;
+      setUser(updatedUser);
+      setSkills(updatedUser.skills || []);
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (err) {
@@ -88,7 +75,7 @@ const ProfileMain = () => {
                   <img
                     src={
                       user.profilePic
-                        ? `/${user.profilePic}`
+                        ? `${import.meta.env.VITE_BASE_URL}/${user.profilePic}`
                         : DEFAULT_PROFILE_PIC
                     }
                     alt="Profile"

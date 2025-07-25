@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./jobs.css";
 
 const JobCardSkeleton = () => (
@@ -12,45 +13,93 @@ const JobCardSkeleton = () => (
 );
 
 function Jobs() {
-  const [jobs, setJobs] = useState([]);
+  //use states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Filters
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [remoteOnly, setRemoteOnly] = useState(false);
-  const [employmentType, setEmploymentType] = useState("");
-  const [datePosted, setDatePosted] = useState("");
+  //filters
+  const [query, setQuery] = useState(
+    () => localStorage.getItem("jobs_query") || ""
+  );
+  const [location, setLocation] = useState(
+    () => localStorage.getItem("jobs_location") || ""
+  );
+  const [remoteOnly, setRemoteOnly] = useState(() => {
+    const val = localStorage.getItem("jobs_remoteOnly");
+    return val === "true";
+  });
+  const [employmentType, setEmploymentType] = useState(
+    () => localStorage.getItem("jobs_employmentType") || ""
+  );
+  const [datePosted, setDatePosted] = useState(
+    () => localStorage.getItem("jobs_datePosted") || ""
+  );
+  const [experience, setExperience] = useState(
+    () => localStorage.getItem("jobs_experience") || ""
+  );
+  const [jobs, setJobs] = useState(() => {
+    const saved = localStorage.getItem("jobs_results");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // store last search parameters
+  const lastSearchRef = useRef(null);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch jobs when the user clicks Search
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  // This function creates a stable key from filters to compare searches
+  const getSearchKey = () =>
+    JSON.stringify({
+      query: query.trim() || "developer",
+      location: location.trim() || "",
+      remoteOnly,
+      employmentType,
+      datePosted,
+      experience,
+    });
+
+  // Save to localStorage whenever filters change
+  useEffect(() => {
+    localStorage.setItem("jobs_query", query);
+    localStorage.setItem("jobs_location", location);
+    localStorage.setItem("jobs_remoteOnly", remoteOnly);
+    localStorage.setItem("jobs_employmentType", employmentType);
+    localStorage.setItem("jobs_datePosted", datePosted);
+    localStorage.setItem("jobs_experience", experience);
+  }, [query, location, remoteOnly, employmentType, datePosted, experience]);
+
+  // Fetch jobs function
+  const fetchJobs = async () => {
     setLoading(true);
     setError("");
     setJobs([]);
 
-    try {
-      const params = new URLSearchParams({
-        query: query.trim() || "developer",
-        location: location.trim() || "",
-        remoteOnly: remoteOnly ? "true" : "false",
-        employmentType: employmentType || "",
-        datePosted: datePosted || "",
-        page: "1",
-      });
+    const searchParams = {
+      query: query.trim() || "developer",
+      location: location.trim() || "",
+      remoteOnly: remoteOnly ? "true" : "false",
+      employmentType: employmentType || "",
+      datePosted: datePosted || "",
+      experience: experience || "",
+      page: "1",
+    };
 
+    try {
+      const params = new URLSearchParams(searchParams);
       const response = await axios.get(
         `/api/jobs/external-jobs?${params.toString()}`
       );
-
       const newJobs = response.data.data || [];
-      setJobs(newJobs);
+      //filter out duplicates
+      const uniqueJobs = newJobs.filter(
+        (job, index, self) =>
+          index === self.findIndex((t) => t.job_id === job.job_id)
+      );
+      setJobs(uniqueJobs);
+      localStorage.setItem("jobs_results", JSON.stringify(uniqueJobs));
 
-      if (newJobs.length === 0) {
+      if (uniqueJobs.length === 0) {
         setError("No jobs found for your criteria.");
       }
     } catch (err) {
@@ -61,6 +110,18 @@ function Jobs() {
     }
   };
 
+  // Handle form submit, trigger fetch if search params changed
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const currentSearchKey = getSearchKey();
+
+    if (lastSearchRef.current !== currentSearchKey) {
+      lastSearchRef.current = currentSearchKey;
+      fetchJobs();
+    }
+  };
+
+  // Scroll handler (no change)
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
@@ -69,6 +130,11 @@ function Jobs() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Navigate to job info page
+  const handleJobClick = (jobId) => {
+    navigate(`/jobinfo/${jobId}`);
+  };
 
   return (
     <div className="jobs-container">
@@ -115,6 +181,18 @@ function Jobs() {
           <option value="month">Last 30 days</option>
         </select>
 
+        <select
+          value={experience}
+          onChange={(e) => setExperience(e.target.value)}
+          className="filter-select"
+        >
+          <option value="">Any Experience</option>
+          <option value="0">Entry Level</option>
+          <option value="1">1+ years</option>
+          <option value="3">3+ years</option>
+          <option value="5">5+ years</option>
+        </select>
+
         <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <input
             type="checkbox"
@@ -141,13 +219,16 @@ function Jobs() {
           Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)}
 
         {!loading &&
-          jobs.map((job) => (
-            <a
-              key={job.job_id}
-              href={job.job_apply_link}
-              target="_blank"
-              rel="noreferrer"
+          jobs.map((job, index) => (
+            <div
+              key={`${job.job_id}-${index}`}
               className="job-card"
+              onClick={() => handleJobClick(job.job_id)}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleJobClick(job.job_id);
+              }}
             >
               <div className="job-header">
                 <h3 className="job-title">{job.job_title}</h3>
@@ -166,7 +247,7 @@ function Jobs() {
               {job.job_employment_type && (
                 <div className="job-type">{job.job_employment_type}</div>
               )}
-            </a>
+            </div>
           ))}
       </div>
 
