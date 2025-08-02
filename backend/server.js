@@ -10,8 +10,6 @@ const app = express();
 const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
-
 //Use port from env or 5000
 const PORT = process.env.PORT || 5000;
 

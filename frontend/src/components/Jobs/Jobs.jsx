@@ -1,7 +1,78 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./jobs.css";
+import "./Jobs.css";
+
+const US_STATES = [
+  "",
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
+
+const SALARY_OPTIONS = [
+  { label: "Any Salary", value: "" },
+  { label: "Up to $30,000", value: "0-30000" },
+  { label: "$30,000 - $50,000", value: "30000-50000" },
+  { label: "$50,000 - $70,000", value: "50000-70000" },
+  { label: "$70,000 - $100,000", value: "70000-100000" },
+  { label: "Over $100,000", value: "100000-" },
+];
+
+const DATE_POSTED_OPTIONS = [
+  { label: "Any Date", value: "" },
+  { label: "Last 24 hours", value: "today" },
+  { label: "Last 3 days", value: "3days" },
+  { label: "Last 7 days", value: "week" },
+  { label: "Last 30 days", value: "month" },
+];
 
 const JobCardSkeleton = () => (
   <div className="job-card skeleton">
@@ -13,94 +84,75 @@ const JobCardSkeleton = () => (
 );
 
 function Jobs() {
-  //use states
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  //filters
   const [query, setQuery] = useState(
     () => localStorage.getItem("jobs_query") || ""
   );
   const [location, setLocation] = useState(
     () => localStorage.getItem("jobs_location") || ""
   );
-  const [remoteOnly, setRemoteOnly] = useState(() => {
-    const val = localStorage.getItem("jobs_remoteOnly");
-    return val === "true";
-  });
-  const [employmentType, setEmploymentType] = useState(
-    () => localStorage.getItem("jobs_employmentType") || ""
+  const [salaryRange, setSalaryRange] = useState(
+    () => localStorage.getItem("jobs_salaryRange") || ""
   );
   const [datePosted, setDatePosted] = useState(
     () => localStorage.getItem("jobs_datePosted") || ""
   );
-  const [experience, setExperience] = useState(
-    () => localStorage.getItem("jobs_experience") || ""
-  );
-  const [jobs, setJobs] = useState(() => {
-    const saved = localStorage.getItem("jobs_results");
-    return saved ? JSON.parse(saved) : [];
-  });
 
-  // store last search parameters
-  const lastSearchRef = useRef(null);
-
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // This function creates a stable key from filters to compare searches
-  const getSearchKey = () =>
-    JSON.stringify({
-      query: query.trim() || "developer",
-      location: location.trim() || "",
-      remoteOnly,
-      employmentType,
-      datePosted,
-      experience,
-    });
-
-  // Save to localStorage whenever filters change
+  // Save filters to localStorage on change
   useEffect(() => {
     localStorage.setItem("jobs_query", query);
     localStorage.setItem("jobs_location", location);
-    localStorage.setItem("jobs_remoteOnly", remoteOnly);
-    localStorage.setItem("jobs_employmentType", employmentType);
+    localStorage.setItem("jobs_salaryRange", salaryRange);
     localStorage.setItem("jobs_datePosted", datePosted);
-    localStorage.setItem("jobs_experience", experience);
-  }, [query, location, remoteOnly, employmentType, datePosted, experience]);
+  }, [query, location, salaryRange, datePosted]);
 
-  // Fetch jobs function
+  useEffect(() => {
+    const savedJobs = localStorage.getItem("job_results");
+    if (savedJobs) {
+      setJobs(JSON.parse(savedJobs));
+    } else {
+      fetchJobs();
+    }
+  }, []);
+
   const fetchJobs = async () => {
     setLoading(true);
     setError("");
     setJobs([]);
 
-    const searchParams = {
-      query: query.trim() || "developer",
-      location: location.trim() || "",
-      remoteOnly: remoteOnly ? "true" : "false",
-      employmentType: employmentType || "",
-      datePosted: datePosted || "",
-      experience: experience || "",
-      page: "1",
-    };
+    // Parse salary range for backend params
+    let salaryMin = "";
+    let salaryMax = "";
+    if (salaryRange) {
+      const [min, max] = salaryRange.split("-");
+      salaryMin = min;
+      salaryMax = max;
+    }
 
     try {
-      const params = new URLSearchParams(searchParams);
-      const response = await axios.get(
-        `/api/jobs/external-jobs?${params.toString()}`
-      );
-      const newJobs = response.data.data || [];
-      //filter out duplicates
-      const uniqueJobs = newJobs.filter(
-        (job, index, self) =>
-          index === self.findIndex((t) => t.job_id === job.job_id)
-      );
-      setJobs(uniqueJobs);
-      localStorage.setItem("jobs_results", JSON.stringify(uniqueJobs));
+      const response = await axios.get("/api/jobs/external-jobs", {
+        params: {
+          query: query.trim() || "developer",
+          location: location.trim(),
+          salaryMin,
+          salaryMax,
+          datePosted,
+        },
+      });
 
-      if (uniqueJobs.length === 0) {
-        setError("No jobs found for your criteria.");
+      console.log("Fetched jobs:", response.data.data);
+
+      setJobs(response.data.data || []);
+
+      //store jobs in localStorage for later use
+      localStorage.setItem("job_results", JSON.stringify(response.data.data));
+
+      if (!response.data.data?.length) {
+        setError("No jobs found.");
       }
     } catch (err) {
       console.error(err);
@@ -110,28 +162,11 @@ function Jobs() {
     }
   };
 
-  // Handle form submit, trigger fetch if search params changed
   const handleSearch = (e) => {
     e.preventDefault();
-    const currentSearchKey = getSearchKey();
-
-    if (lastSearchRef.current !== currentSearchKey) {
-      lastSearchRef.current = currentSearchKey;
-      fetchJobs();
-    }
+    fetchJobs();
   };
 
-  // Scroll handler (no change)
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Navigate to job info page
   const handleJobClick = (jobId) => {
     navigate(`/jobinfo/${jobId}`);
   };
@@ -149,24 +184,29 @@ function Jobs() {
           className="search-input"
         />
 
-        <input
-          type="text"
+        <select
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="Location (e.g., Remote or New York)"
-          className="search-input"
-        />
-
-        <select
-          value={employmentType}
-          onChange={(e) => setEmploymentType(e.target.value)}
           className="filter-select"
         >
-          <option value="">Any Type</option>
-          <option value="FULLTIME">Full-time</option>
-          <option value="PARTTIME">Part-time</option>
-          <option value="CONTRACTOR">Contract</option>
-          <option value="INTERN">Internship</option>
+          <option value="">Any State</option>
+          {US_STATES.slice(1).map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={salaryRange}
+          onChange={(e) => setSalaryRange(e.target.value)}
+          className="filter-select"
+        >
+          {SALARY_OPTIONS.map(({ label, value }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
 
         <select
@@ -174,33 +214,12 @@ function Jobs() {
           onChange={(e) => setDatePosted(e.target.value)}
           className="filter-select"
         >
-          <option value="">Any Date</option>
-          <option value="today">Last 24 hours</option>
-          <option value="3days">Last 3 days</option>
-          <option value="week">Last 7 days</option>
-          <option value="month">Last 30 days</option>
+          {DATE_POSTED_OPTIONS.map(({ label, value }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
-
-        <select
-          value={experience}
-          onChange={(e) => setExperience(e.target.value)}
-          className="filter-select"
-        >
-          <option value="">Any Experience</option>
-          <option value="0">Entry Level</option>
-          <option value="1">1+ years</option>
-          <option value="3">3+ years</option>
-          <option value="5">5+ years</option>
-        </select>
-
-        <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <input
-            type="checkbox"
-            checked={remoteOnly}
-            onChange={(e) => setRemoteOnly(e.target.checked)}
-          />
-          Remote Only
-        </label>
 
         <button type="submit" className="search-button" disabled={loading}>
           {loading ? "Searching..." : "Search"}
@@ -221,45 +240,39 @@ function Jobs() {
         {!loading &&
           jobs.map((job, index) => (
             <div
-              key={`${job.job_id}-${index}`}
+              key={job.id || index}
               className="job-card"
-              onClick={() => handleJobClick(job.job_id)}
+              onClick={() => handleJobClick(job.id || job.job_id)}
               role="button"
               tabIndex={0}
               onKeyPress={(e) => {
-                if (e.key === "Enter") handleJobClick(job.job_id);
+                if (e.key === "Enter") handleJobClick(job.id || job.job_id);
               }}
             >
               <div className="job-header">
-                <h3 className="job-title">{job.job_title}</h3>
-                {job.employer_logo && (
-                  <img
-                    src={job.employer_logo}
-                    alt={job.employer_name || "Employer logo"}
-                    className="job-logo"
-                  />
+                <h3 className="job-title">{job.title || job.job_title}</h3>
+                {job.company?.display_name && (
+                  <div className="job-company">{job.company.display_name}</div>
                 )}
               </div>
-              <div className="job-company">{job.employer_name}</div>
               <div className="job-location">
-                {job.job_city || "Remote"}, {job.job_country}
+                {job.location?.display_name || "Remote"}
               </div>
-              {job.job_employment_type && (
-                <div className="job-type">{job.job_employment_type}</div>
-              )}
+              <div className="job-type">{job.contract_time}</div>
+              <div className="job-salary">
+                {job.salary_min && job.salary_max
+                  ? `$${Math.round(
+                      job.salary_min
+                    ).toLocaleString()} - $${Math.round(
+                      job.salary_max
+                    ).toLocaleString()}`
+                  : job.salary_min
+                  ? `$${Math.round(job.salary_min).toLocaleString()}`
+                  : ""}
+              </div>
             </div>
           ))}
       </div>
-
-      {showScrollTop && (
-        <button
-          className="scroll-to-top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Scroll to top"
-        >
-          ↑
-        </button>
-      )}
     </div>
   );
 }

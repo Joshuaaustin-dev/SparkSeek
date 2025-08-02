@@ -5,7 +5,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path   = require('path');
 const fs     = require('fs');
-const auth   = require('../middleware/authMiddleware');
 
 //Get Users
 router.get('/', async (req, res) => {
@@ -96,7 +95,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* Profile picture route: /api/users/profilePic */
-router.put("/profilePic", auth, upload.single("profilePic"), async (req, res) => {
+router.put("/profilePic", authMiddleware, upload.single("profilePic"), async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });

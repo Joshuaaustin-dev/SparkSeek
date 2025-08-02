@@ -1,231 +1,117 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./jobInfoCard.css";
-
-function ToggleableSection({ title, children, previewLength = 300 }) {
-  const [expanded, setExpanded] = useState(false);
-
-  const isText = typeof children === "string";
-  const isLong = isText && children.length > previewLength;
-  const previewText = isLong
-    ? children.slice(0, previewLength) + "..."
-    : children;
-
-  const sectionId = title.toLowerCase().replace(/\s+/g, "-") + "-content";
-
-  return (
-    <section className={`toggle-section ${expanded ? "expanded" : ""}`}>
-      <h3>{title}</h3>
-      {isText ? (
-        <>
-          <p id={sectionId}>{expanded || !isLong ? children : previewText}</p>
-          {isLong && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="toggle-button"
-              aria-expanded={expanded}
-              aria-controls={sectionId}
-            >
-              {expanded ? "See Less" : "See More"}
-            </button>
-          )}
-        </>
-      ) : (
-        <div id={sectionId}>{children}</div>
-      )}
-    </section>
-  );
-}
+import { useEffect, useState } from "react";
+import "./jobInfoCard.css"; // Optional: Add styles as needed
 
 function JobInfoCard() {
   const { jobId } = useParams();
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError("");
+    const storedJobs = localStorage.getItem("job_results");
+    if (storedJobs) {
+      const parsedJobs = JSON.parse(storedJobs);
 
-    try {
-      const savedJobs = localStorage.getItem("jobs_results");
-      if (!savedJobs) {
-        setError("No saved job data found.");
-        setLoading(false);
-        return;
-      }
+      // Try both possible ID fields
+      const foundJob = parsedJobs.find(
+        (j) => String(j.id) === jobId || String(j.job_id) === jobId
+      );
 
-      const jobsArray = JSON.parse(savedJobs);
-      const foundJob = jobsArray.find((j) => j.job_id === jobId);
-
-      if (!foundJob) {
-        setError("Job not found in saved data.");
-      } else {
-        setJob(foundJob);
-      }
-    } catch (err) {
-      setError("Failed to load job data.");
-    } finally {
-      setLoading(false);
+      setJob(foundJob);
     }
   }, [jobId]);
 
-  async function handleSaveJob() {
-    if (!job) return;
-    setSaving(true);
-    setSaveSuccess(null);
-
-    try {
-      const response = await fetch("/api/saveJob", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ job }),
-      });
-
-      if (!response.ok) throw new Error("Failed to save job");
-
-      setSaveSuccess(true);
-    } catch {
-      setSaveSuccess(false);
-    } finally {
-      setSaving(false);
-    }
+  if (!job) {
+    return (
+      <div className="job-info-card">
+        <h2>Job Not Found</h2>
+        <button onClick={() => navigate(-1)}>← Back</button>
+      </div>
+    );
   }
 
-  if (loading) return <div className="loading">Loading job details...</div>;
-  if (error) return <div className="error">{error}</div>;
-  if (!job) return <div className="no-job">No job found.</div>;
-
   return (
-    <main className="job-info-card" role="main" aria-label="Job details">
-      <button
-        onClick={() => navigate(-1)}
-        className="back-button"
-        aria-label="Go back to job listings"
-      >
-        ← Back to Search Results
-      </button>
+    <div className="job-info-card">
+      <button onClick={() => navigate(-1)}>← Back</button>
+      <h2>{job.title}</h2>
+      <h3>{job.company?.display_name}</h3>
+      <p>
+        <strong>Location:</strong> {job.location?.display_name || "Remote"}
+      </p>
+      <p>
+        <strong>Type:</strong> {job.contract_time || "N/A"}
+      </p>
 
-      <section className="action-buttons" aria-label="Job actions">
-        <button
-          onClick={handleSaveJob}
-          className="save-job-button"
-          disabled={saving}
-          aria-live="polite"
-          aria-disabled={saving}
+      {job.salary_min && (
+        <p>
+          <strong>Salary:</strong>{" "}
+          {job.salary_max
+            ? `$${Math.round(job.salary_min).toLocaleString()} - $${Math.round(
+                job.salary_max
+              ).toLocaleString()}`
+            : `$${Math.round(job.salary_min).toLocaleString()}`}
+        </p>
+      )}
+
+      <p>
+        <strong>Description:</strong>
+      </p>
+      <p
+        dangerouslySetInnerHTML={{
+          __html: job.description || "No description available.",
+        }}
+      />
+
+      {job.redirect_url && (
+        <a
+          href={job.redirect_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="apply-button"
         >
-          {saving ? "Saving..." : "Track Application"}
-        </button>
-        {saveSuccess === true && (
-          <div className="save-success" role="alert" aria-live="assertive">
-            Job saved to your dashboard!
-          </div>
-        )}
-        {saveSuccess === false && (
-          <div className="save-error" role="alert" aria-live="assertive">
-            Failed to save job. Please try again.
-          </div>
-        )}
-
-        {job.job_apply_link && (
-          <a
-            href={job.job_apply_link}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="apply-button"
-            aria-label={`Apply for ${job.job_title} at ${job.employer_name}`}
-          >
-            Apply Now
-          </a>
-        )}
-      </section>
-
-      {/* Job details */}
-      <header className="job-header">
-        <h1 className="job-title">{job.job_title}</h1>
-        <div className="company-info">
-          {job.employer_logo && (
-            <img
-              src={job.employer_logo}
-              alt={`${job.employer_name} logo`}
-              className="employer-logo"
-              loading="lazy"
-            />
-          )}
-          <h2 className="employer-name">{job.employer_name}</h2>
-        </div>
-        {job.employer_website && (
-          <a
-            href={job.employer_website}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="employer-website"
-          >
-            Visit Employer Website
-          </a>
-        )}
-      </header>
-
-      <section className="job-key-info" aria-label="Job key information">
-        <p>
-          <strong>Location:</strong>{" "}
-          {job.job_location ||
-            `${job.job_city}, ${job.job_state}, ${job.job_country}`}
-        </p>
-        <p>
-          <strong>Employment Type:</strong> {job.job_employment_type || "N/A"}
-        </p>
-        <p>
-          <strong>Remote:</strong> {job.job_is_remote ? "Yes" : "No"}
-        </p>
-        <p>
-          <strong>Posted:</strong> {job.job_posted_at}
-        </p>
-        {(job.job_min_salary || job.job_max_salary) && (
-          <p>
-            <strong>Salary:</strong>{" "}
-            {job.job_min_salary ? `$${job.job_min_salary}` : ""}
-            {job.job_max_salary ? ` - $${job.job_max_salary}` : ""}
-          </p>
-        )}
-      </section>
-
-      {/* Job Description and Highlights */}
-      {job.job_description && (
-        <ToggleableSection title="Job Description">
-          {job.job_description}
-        </ToggleableSection>
+          Apply Now
+        </a>
       )}
 
-      {job.job_highlights && (
-        <section className="job-highlights">
-          {job.job_highlights.Qualifications?.length > 0 && (
-            <ToggleableSection title="Qualifications">
-              <ul>
-                {job.job_highlights.Qualifications.map((q, i) => (
-                  <li key={`qual-${i}`}>{q}</li>
-                ))}
-              </ul>
-            </ToggleableSection>
-          )}
+      <button
+        className="track-button"
+        onClick={async () => {
+          try {
+            const payload = {
+              title: job.title,
+              company: job.company?.display_name || "",
+              location: job.location?.display_name || "",
+              type: job.contract_time || "",
+              description: job.description || "",
+              applyUrl: job.redirect_url || "",
+              salary_min: job.salary_min,
+              salary_max: job.salary_max,
+              jobId: job.id || job.job_id,
+            };
 
-          {job.job_highlights.Responsibilities?.length > 0 && (
-            <ToggleableSection title="Responsibilities">
-              <ul>
-                {job.job_highlights.Responsibilities.map((r, i) => (
-                  <li key={`resp-${i}`}>{r}</li>
-                ))}
-              </ul>
-            </ToggleableSection>
-          )}
-        </section>
-      )}
-    </main>
+            const res = await fetch("/api/jobs/track", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+              alert("Application tracked!");
+            } else {
+              alert("Failed to track: " + data.error);
+            }
+          } catch (error) {
+            console.error(error);
+            alert("Error tracking job.");
+          }
+        }}
+      >
+        Track Application
+      </button>
+    </div>
   );
 }
 
