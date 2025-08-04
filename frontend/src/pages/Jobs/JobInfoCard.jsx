@@ -18,6 +18,7 @@ function JobInfoCard() {
       );
 
       setJob(foundJob);
+      console.log("Job found in localStorage:", foundJob);
     }
   }, [jobId]);
 
@@ -86,13 +87,14 @@ function JobInfoCard() {
               applyUrl: job.redirect_url || "",
               salary_min: job.salary_min,
               salary_max: job.salary_max,
-              jobId: job.id || job.job_id,
+              jobId: job.id,
             };
 
             const res = await fetch("/api/jobs/track", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
               body: JSON.stringify(payload),
             });
