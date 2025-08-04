@@ -6,7 +6,6 @@ const router = express.Router();
 const TrackedJob = require("../models/jobModel");
 
 // Get jobs from the Adzuna API
-// Get jobs from the Adzuna API
 router.get("/external-jobs", async (req, res) => {
   const { query = "", location = "", salaryMin = "", salaryMax = "", datePosted = "" } = req.query;
 
@@ -79,6 +78,7 @@ router.post("/track", auth, async (req, res) => {
       salary_max,
       userId,
       jobId,
+      status: req.body.status || "Viewed",
     });
 
     await newJob.save();
@@ -89,6 +89,20 @@ router.post("/track", auth, async (req, res) => {
     res.status(500).json({ error: "Failed to track job" });
   }
 });
+
+//get tracked jobs for the user
+router.get("/my-jobs", auth, async (req, res) => { 
+
+  try {
+    const jobs = await TrackedJob.find({ userId: req.user._id });
+    res.json(jobs);
+  } catch (err) {
+    console.error("Error fetching tracked jobs:", err.message);
+    res.status(500).json({ error: "Failed to fetch tracked jobs" });
+  }
+});
+
+
 
 
 module.exports = router;

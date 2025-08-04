@@ -1,22 +1,58 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import PieChart from "./PieChart";
 import JobBoard from "./JobBoard";
 import "./DashboardMain.css";
 
 const DashboardMain = () => {
+  // Simulated data for job applications
   const [columns, setColumns] = useState({
-    Viewed: [
-      { id: 1, position: "Frontend Developer", company: "Google" },
-      { id: 2, position: "Backend Engineer", company: "Amazon" },
-    ],
-    "Application Submitted": [
-      { id: 3, position: "Fullstack Dev", company: "Facebook" },
-    ],
-    "Waiting Response": [{ id: 4, position: "Data Analyst", company: "IBM" }],
-    Interview: [{ id: 5, position: "Backend Engineer 2", company: "Amazon" }],
-    Offer: [{ id: 6, position: "Web Developer", company: "Netflix" }],
+    Viewed: [],
+    "Application Submitted": [],
+    "Waiting Response": [],
+    Interview: [],
+    Offer: [],
   });
 
+  // Fetch tracked jobs
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get("/api/jobs/my-jobs", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const jobsByStatus = {
+          Viewed: [],
+          "Application Submitted": [],
+          "Waiting Response": [],
+          Interview: [],
+          Offer: [],
+        };
+
+        res.data.forEach((job) => {
+          const stage = job.status || "Viewed";
+          if (jobsByStatus[stage]) {
+            jobsByStatus[stage].push({
+              id: job._id,
+              position: job.title,
+              company: job.company,
+            });
+          }
+        });
+
+        setColumns(jobsByStatus);
+      } catch (err) {
+        console.error("Error loading jobs:", err);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // Pie chart data
   const pieData = Object.entries(columns).map(([stage, jobs]) => ({
     stage,
     count: jobs.length,

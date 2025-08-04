@@ -88,6 +88,7 @@ function JobInfoCard() {
               salary_min: job.salary_min,
               salary_max: job.salary_max,
               jobId: job.id,
+              status: "Viewed",
             };
 
             const res = await fetch("/api/jobs/track", {
