@@ -136,7 +136,7 @@ function Jobs() {
     try {
       const response = await axios.get("/api/jobs/external-jobs", {
         params: {
-          query: query.trim() || "developer",
+          query: query.trim(),
           location: location.trim(),
           salaryMin,
           salaryMax,
@@ -240,24 +240,19 @@ function Jobs() {
         {!loading &&
           jobs.map((job, index) => (
             <div
-              key={job.id || index}
+              key={job.id}
               className="job-card"
-              onClick={() => handleJobClick(job.id || job.job_id)}
+              onClick={() => handleJobClick(job.id)}
               role="button"
               tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") handleJobClick(job.id || job.job_id);
-              }}
             >
               <div className="job-header">
-                <h3 className="job-title">{job.title || job.job_title}</h3>
+                <h3 className="job-title">{job.title}</h3>
                 {job.company?.display_name && (
                   <div className="job-company">{job.company.display_name}</div>
                 )}
               </div>
-              <div className="job-location">
-                {job.location?.display_name || "Remote"}
-              </div>
+              <div className="job-location">{job.location.display_name}</div>
               <div className="job-type">{job.contract_time}</div>
               <div className="job-salary">
                 {job.salary_min && job.salary_max

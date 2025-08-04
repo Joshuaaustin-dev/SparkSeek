@@ -7,17 +7,17 @@ import {
   Navigate,
   useNavigate,
 } from "react-router-dom";
-import Login from "./components/Login/Login";
-import Signup from "./components/Login/Signup";
-import DashboardMain from "./components/Dashboard/DashboardMain";
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Login/Signup";
+import DashboardMain from "./pages/Dashboard/DashboardMain";
 import NavigationMenu from "./components/Navbar/NavigationMenu";
 import TopNav from "./components/Navbar/TopNav";
-import ProfileMain from "./components/Profile/ProfileMain";
-import ResumeMain from "./components/Resume/ResumeMain";
-import Jobs from "./components/Jobs/Jobs";
-import JobInfoCard from "./components/Jobs/JobInfoCard";
-import MessagingWindow from "./components/Messaging/MessagingWindow";
-import MessagingPage from "./components/Messaging/MessagingPage";
+import ProfileMain from "./pages/Profile/ProfileMain";
+import ResumeMain from "./pages/Resume/ResumeMain";
+import Jobs from "./pages/Jobs/Jobs";
+import JobInfoCard from "./pages/Jobs/JobInfoCard";
+import MessagingWindow from "./pages/Messaging/MessagingWindow";
+import MessagingPage from "./pages/Messaging/MessagingPage";
 import "./App.css";
 
 function AppWrapper() {
