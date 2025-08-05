@@ -17,10 +17,6 @@ const DashboardJobCard = ({ job }) => {
           userSelect: "none",
           transition: "box-shadow 0.2s ease",
         }}
-        draggable
-        onDragStart={(e) => {
-          e.dataTransfer.setData("text/plain", JSON.stringify(job));
-        }}
         onClick={() => setShowDetails(true)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -59,7 +55,6 @@ const DashboardJobCard = ({ job }) => {
           {job.company}
         </p>
       </div>
-
       {showDetails && (
         <div
           style={{
