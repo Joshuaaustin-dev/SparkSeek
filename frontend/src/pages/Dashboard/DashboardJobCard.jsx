@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DashboardJobDetails from "./DashboardJobDetails";
 
 const DashboardJobCard = ({ job }) => {
   const [showDetails, setShowDetails] = useState(false);

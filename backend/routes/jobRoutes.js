@@ -102,7 +102,28 @@ router.get("/my-jobs", auth, async (req, res) => {
   }
 });
 
+// Update a tracked job's status
+router.put("/update-status/:id", auth, async (req, res) => {
+  const { status } = req.body;
+  const jobId = req.params.id;
 
+  try {
+    const updatedJob = await TrackedJob.findByIdAndUpdate(
+      jobId,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedJob) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    res.json(updatedJob);
+  } catch (err) {
+    console.error("Error updating job status:", err.message);
+    res.status(500).json({ error: "Failed to update job status" });
+  }
+});
 
 
 module.exports = router;

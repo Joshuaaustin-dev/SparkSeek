@@ -52,6 +52,12 @@ const DashboardMain = () => {
               id: job._id,
               position: job.title,
               company: job.company,
+              location: job.location,
+              description: job.description,
+              applyUrl: job.applyUrl,
+              salary_min: job.salary_min,
+              salary_max: job.salary_max,
+              status: job.status,
             });
           }
         });
@@ -70,9 +76,11 @@ const DashboardMain = () => {
   }));
 
   // Drag and drop handler
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
-    if (!destination) return;
+
+    if (!destination) return; //handled dropped outside of droppable area
+
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -93,8 +101,10 @@ const DashboardMain = () => {
     } else {
       const startJobs = Array.from(startColumn);
       const [movedJob] = startJobs.splice(source.index, 1);
+      //update status locally
+      const updatedMovedJob = { ...movedJob, status: destination.droppableId };
       const finishJobs = Array.from(finishColumn);
-      finishJobs.splice(destination.index, 0, movedJob);
+      finishJobs.splice(destination.index, 0, updatedMovedJob);
       setColumns({
         ...columns,
         [source.droppableId]: startJobs,
@@ -103,8 +113,8 @@ const DashboardMain = () => {
 
       // Update job status on backend
       try {
-        axios.patch(
-          `/api/jobs/${draggableId}`,
+        axios.put(
+          `/api/jobs/update-status/${draggableId}`,
           { status: stageMapping[destination.droppableId] }, // Send display name to backend
           {
             headers: {
@@ -119,7 +129,6 @@ const DashboardMain = () => {
   };
 
   const filteredPieData = pieData.filter((entry) => entry.count > 0);
-  const lastParsedDate = new Date("2025-07-15T14:30:00");
 
   // Daily quote and video states
   const [dailyQuote, setDailyQuote] = useState("");
@@ -241,7 +250,7 @@ const DashboardMain = () => {
                 }}
                 onError={() => {
                   console.error("Error loading YouTube video");
-                  setDailyVideoId("TfC-V6PyYQM"); // Fallback
+                  setDailyVideoId("TfC-V6PyYQM");
                 }}
               />
             ) : (
@@ -255,14 +264,6 @@ const DashboardMain = () => {
         stageMapping={stageMapping}
         onDragEnd={onDragEnd}
       />
-      <section className="resume-section">
-        <h3>Last Resume Parsed</h3>
-        <p>
-          {lastParsedDate
-            ? lastParsedDate.toLocaleString()
-            : "You haven't parsed a resume yet."}
-        </p>
-      </section>
     </div>
   );
 };
