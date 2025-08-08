@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import PieChart from "./PieChart";
 import JobBoard from "./JobBoard";
+import YouTube from "react-youtube";
 import "./DashboardMain.css";
 
 const DashboardMain = () => {
@@ -120,37 +121,99 @@ const DashboardMain = () => {
   const filteredPieData = pieData.filter((entry) => entry.count > 0);
   const lastParsedDate = new Date("2025-07-15T14:30:00");
 
-  // Daily quote and video
-  const [dailyQuote, setDailyQuote] = useState("Loading...");
-  const [dailyVideoUrl, setDailyVideoUrl] = useState(
-    "https://www.youtube.com/embed/ZXsQAXx_ao0"
-  );
+  // Daily quote and video states
+  const [dailyQuote, setDailyQuote] = useState("");
+  const [dailyVideoId, setDailyVideoId] = useState("");
+  const [isLoadingQuote, setIsLoadingQuote] = useState(true);
+  const [isLoadingVideo, setIsLoadingVideo] = useState(true);
 
+  const fallbackQuotes = [
+    {
+      q: "Success is not final, failure is not fatal.",
+      a: "Winston Churchill",
+    },
+    {
+      q: "The only way to do great work is to love what you do.",
+      a: "Steve Jobs",
+    },
+  ];
+
+  const API_BASE_URL = "http://localhost:5000";
+
+  // Fetch daily quote with caching
+  // Fetch daily quote with caching
   useEffect(() => {
-    const fetchDailyQuote = async () => {
+    const getDailyQuote = async () => {
+      const today = new Date().toDateString();
+      const cachedQuote = localStorage.getItem("dailyQuote");
+      const cachedDate = localStorage.getItem("quoteDate");
+
+      if (cachedQuote && cachedDate === today) {
+        setDailyQuote(cachedQuote);
+        setIsLoadingQuote(false);
+        return;
+      }
+
       try {
-        const res = await axios.get("https://zenquotes.io/api/today");
-        const quote = res.data[0];
-        setDailyQuote(`"${quote.q}" – ${quote.a}`);
+        const res = await axios.get(
+          `${API_BASE_URL}/api/inspiration/daily-quote`
+        );
+        console.log("Quote API response:", res.data); // Debug log
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+          const quote = `"${res.data[0].q}" – ${res.data[0].a}`;
+          setDailyQuote(quote);
+          localStorage.setItem("dailyQuote", quote);
+          localStorage.setItem("quoteDate", today);
+        } else {
+          throw new Error("Invalid quote response");
+        }
       } catch (error) {
         console.error("Error fetching daily quote:", error);
-        setDailyQuote("Stay positive and keep pushing forward!");
+        const fallbackQuote = `"${fallbackQuotes[0].q}" – ${fallbackQuotes[0].a}`;
+        setDailyQuote(fallbackQuote);
+        localStorage.setItem("dailyQuote", fallbackQuote);
+        localStorage.setItem("quoteDate", today);
+      }
+      setIsLoadingQuote(false);
+    };
+    getDailyQuote();
+  }, []);
+
+  // Fetch daily video ID
+  useEffect(() => {
+    const getDailyVideo = async () => {
+      const today = new Date().toDateString();
+      const cachedVideoId = localStorage.getItem("dailyVideoId");
+      const cachedDate = localStorage.getItem("videoDate");
+
+      if (cachedVideoId && cachedDate === today) {
+        setDailyVideoId(cachedVideoId);
+        setIsLoadingVideo(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${API_BASE_URL}/api/inspiration/video-of-the-day`
+        );
+        console.log("Video API response:", res.data); // Debug log
+        const videoId = res.data.videoId.includes("/embed/")
+          ? res.data.videoId.split("/embed/")[1]
+          : res.data.videoId;
+        setDailyVideoId(videoId);
+        localStorage.setItem("dailyVideoId", videoId);
+        localStorage.setItem("videoDate", today);
+        setIsLoadingVideo(false);
+      } catch (error) {
+        console.error("Failed to load daily video:", error);
+        const fallbackVideoId = "TfC-V6PyYQM";
+        setDailyVideoId(fallbackVideoId);
+        localStorage.setItem("dailyVideoId", fallbackVideoId);
+        localStorage.setItem("videoDate", today);
+        setIsLoadingVideo(false);
       }
     };
-
-    const selectDailyVideo = () => {
-      const videos = [
-        "https://www.youtube.com/embed/ZXsQAXx_ao0",
-        "https://www.youtube.com/embed/wnHW6o8WMas",
-        "https://www.youtube.com/embed/_lfxYhtf8o4",
-        "https://www.youtube.com/embed/mgmVOuLgFB0",
-      ];
-      const todayIndex = new Date().getDate() + new Date().getMonth() * 31;
-      setDailyVideoUrl(videos[todayIndex % videos.length]);
-    };
-
-    fetchDailyQuote();
-    selectDailyVideo();
+    getDailyVideo();
   }, []);
 
   return (
@@ -162,15 +225,28 @@ const DashboardMain = () => {
         </div>
         <section className="dashboard-card">
           <h3>Daily Inspiration</h3>
-          <blockquote className="dashboard-quote">{dailyQuote}</blockquote>
+          <blockquote className="dashboard-quote">
+            {isLoadingQuote ? "Loading quote..." : dailyQuote}
+          </blockquote>{" "}
           <div className="dashboard-video-wrapper">
-            <iframe
-              src={dailyVideoUrl}
-              title="Daily Inspirational Video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              sandbox="allow-scripts allow-same-origin"
-            />
+            {isLoadingVideo ? (
+              <p>Loading video...</p>
+            ) : dailyVideoId ? (
+              <YouTube
+                videoId={dailyVideoId}
+                opts={{
+                  width: "100%",
+                  height: "200",
+                  playerVars: { autoplay: 0 },
+                }}
+                onError={() => {
+                  console.error("Error loading YouTube video");
+                  setDailyVideoId("TfC-V6PyYQM"); // Fallback
+                }}
+              />
+            ) : (
+              <p>Video not available today.</p>
+            )}
           </div>
         </section>
       </div>
