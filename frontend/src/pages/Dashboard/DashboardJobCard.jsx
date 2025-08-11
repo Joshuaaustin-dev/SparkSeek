@@ -27,7 +27,7 @@ const DashboardJobCard = ({ job }) => {
         }}
         role="button"
         tabIndex={0}
-        aria-label={`${job.position} at ${job.company}, click for details`}
+        aria-label={`${job.title} at ${job.company}, click for details`}
       >
         <h4
           style={{
@@ -38,9 +38,9 @@ const DashboardJobCard = ({ job }) => {
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
-          title={job.position}
+          title={job.title}
         >
-          {job.position}
+          {job.title}
         </h4>
         <p
           style={{

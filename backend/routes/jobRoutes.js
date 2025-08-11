@@ -52,8 +52,13 @@ router.get("/external-jobs", async (req, res) => {
 // Save a job for the user to track
 router.post("/track", auth, async (req, res) => {
   try {
-    const { title, company, location, description, applyUrl, salary_min, salary_max, jobId } = req.body;
+    let { title, company, location, description, applyUrl, salary_min, salary_max, jobId } = req.body;
     const userId = req.user._id;
+
+     // If jobId is not provided, generate a unique one
+    if (!jobId) {
+      jobId = `${userId}-${Date.now()}`;
+    }
 
     const existingJob = await TrackedJob.findOne({ jobId, userId });
 
@@ -104,13 +109,13 @@ router.get("/my-jobs", auth, async (req, res) => {
 
 // Update a tracked job's status
 router.put("/update-status/:id", auth, async (req, res) => {
-  const { status } = req.body;
   const jobId = req.params.id;
+  const updateFields = { ...req.body }; // Accept all fields from the body
 
   try {
     const updatedJob = await TrackedJob.findByIdAndUpdate(
       jobId,
-      { status },
+      updateFields,
       { new: true }
     );
 
@@ -120,8 +125,22 @@ router.put("/update-status/:id", auth, async (req, res) => {
 
     res.json(updatedJob);
   } catch (err) {
-    console.error("Error updating job status:", err.message);
-    res.status(500).json({ error: "Failed to update job status" });
+    console.error("Error updating job:", err.message);
+    res.status(500).json({ error: "Failed to update job" });
+  }
+});
+
+// Delete a tracked job
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const job = await TrackedJob.findByIdAndDelete(req.params.id);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    res.json({ message: "Job deleted" });
+  } catch (err) {
+    console.error("Error deleting job:", err.message);
+    res.status(500).json({ error: "Failed to delete job" });
   }
 });
 

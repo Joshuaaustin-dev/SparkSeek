@@ -97,14 +97,7 @@ const ProfileMain = () => {
                 {user.role === "seeker" ? (
                   <JobSeekerDetails bio={user.bio} setBio={() => {}} />
                 ) : (
-                  <RecruiterDetails
-                    companyName={user.companyName}
-                    setCompanyName={() => {}}
-                    companyWebsite={user.companyWebsite}
-                    setCompanyWebsite={() => {}}
-                    contactNumber={user.contactNumber}
-                    setContactNumber={() => {}}
-                  />
+                  <RecruiterDetails bio={user.bio} setBio={() => {}} />
                 )}
               </div>
 

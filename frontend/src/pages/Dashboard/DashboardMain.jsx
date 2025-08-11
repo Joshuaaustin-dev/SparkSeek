@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import PieChart from "./PieChart";
 import JobBoard from "./JobBoard";
+import JobForm from "./JobForm";
 import YouTube from "react-youtube";
 import "./DashboardMain.css";
 
@@ -50,7 +51,7 @@ const DashboardMain = () => {
           if (jobsByStatus[normalizedStatus]) {
             jobsByStatus[normalizedStatus].push({
               id: job._id,
-              position: job.title,
+              title: job.title,
               company: job.company,
               location: job.location,
               description: job.description,
@@ -225,6 +226,12 @@ const DashboardMain = () => {
     getDailyVideo();
   }, []);
 
+  const [showJobModal, setShowJobModal] = useState(false);
+
+  const handleCustomJobSubmit = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-top-row">
@@ -259,6 +266,19 @@ const DashboardMain = () => {
           </div>
         </section>
       </div>
+      <div className="flex justify-end mb-4">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+          onClick={() => setShowJobModal(true)}
+        >
+          + Add Job
+        </button>
+      </div>
+      <JobForm
+        open={showJobModal}
+        onClose={() => setShowJobModal(false)}
+        onSuccess={handleCustomJobSubmit}
+      />
       <JobBoard
         columns={columns}
         stageMapping={stageMapping}

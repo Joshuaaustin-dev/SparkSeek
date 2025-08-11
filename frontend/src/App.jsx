@@ -16,9 +16,11 @@ import ProfileMain from "./pages/Profile/ProfileMain";
 import ResumeMain from "./pages/Resume/ResumeMain";
 import Jobs from "./pages/Jobs/Jobs";
 import JobInfoCard from "./pages/Jobs/JobInfoCard";
+import UserPage from "./pages/Users/Users";
 import MessagingWindow from "./pages/Messaging/MessagingWindow";
 import MessagingPage from "./pages/Messaging/MessagingPage";
 import "./App.css";
+import Users from "./pages/Users/Users";
 
 function AppWrapper() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -104,8 +106,8 @@ function AppWrapper() {
                 isAuthenticated ? <JobInfoCard /> : <Navigate to="/" replace />
               }
             />
+            <Route path="/users" element={<UserPage />} />
             <Route path="/messages" element={<MessagingWindow />} />
-
             <Route path="/messages/:otherUserId" element={<MessagingPage />} />
           </Routes>
         </div>

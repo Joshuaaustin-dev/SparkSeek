@@ -63,7 +63,9 @@ const NavigationMenu = () => {
         </li>
       </ul>
       <div className="sidebar-tools">
-        <FaUsers className="tool-icon" title="Notifications" />
+        <NavLink to="/users">
+          <FaUsers className="tool-icon" title="Users" />
+        </NavLink>
         <NavLink to="/messages">
           <FaCommentDots className="tool-icon" title="Messages" />
         </NavLink>{" "}

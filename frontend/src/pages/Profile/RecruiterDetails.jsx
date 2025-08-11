@@ -1,4 +1,4 @@
-const JobSeekerDetails = ({ bio }) => (
+const RecruiterDetails = ({ bio }) => (
   <div className="mb-5">
     <div
       aria-label="Bio"
@@ -15,4 +15,4 @@ const JobSeekerDetails = ({ bio }) => (
   </div>
 );
 
-export default JobSeekerDetails;
+export default RecruiterDetails;

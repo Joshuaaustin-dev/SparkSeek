@@ -12,6 +12,16 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+//Get users except the logged-in user
+router.get('/all', authMiddleware, async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.user.id } }).select('-password');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get current logged-in user profile
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
