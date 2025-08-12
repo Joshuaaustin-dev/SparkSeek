@@ -176,7 +176,11 @@ const Users = () => {
               >
                 <div className="user-card-body">
                   <img
-                    src={user.profilePictureUrl || "/profilePlaceholder.jpg"}
+                    src={
+                      user.profilePic
+                        ? `${import.meta.env.VITE_BASE_URL}/${user.profilePic}`
+                        : "/profilePlaceholder.jpg"
+                    }
                     className="user-img rounded-circle mx-auto d-block"
                     alt={user.name}
                     loading="lazy"
@@ -212,10 +216,15 @@ const Users = () => {
 
             <div className="modal-header">
               <img
-                src={selected.profilePictureUrl || "/profilePlaceholder.jpg"}
+                src={
+                  selected.profilePic
+                    ? `${import.meta.env.VITE_BASE_URL}/${selected.profilePic}`
+                    : "/profilePlaceholder.jpg"
+                }
                 alt={selected.name}
                 className="user-img-large rounded-circle mx-auto d-block"
               />
+
               <h3 id="modal-title" className="modal-name">
                 {selected.name}
               </h3>
