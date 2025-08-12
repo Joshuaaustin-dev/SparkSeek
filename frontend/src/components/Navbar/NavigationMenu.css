@@ -91,7 +91,6 @@
 }
 
 /* Tool icons */
-
 .sidebar-tools {
   display: flex;
   justify-content: space-around;
@@ -111,37 +110,69 @@
   transform: scale(1.1);
 }
 
-/* Responsive improvements */
+/* Responsiveness */
+@media (max-width: 768px) {
+  /* Hide top nav on small screens */
+  .top-nav {
+    display: none;
+  }
 
-@media screen and (max-width: 768px) {
+  /* Sidebar becomes top nav */
   .sidebar {
-    width: 60px;
-    padding: 1.5rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 60px;
+    flex-direction: row;
+    justify-content: space-around;
     align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 0;
+  }
+
+  /* Adjust nav links to be horizontal */
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .nav-links li {
+    margin-bottom: 0;
+  }
+
+  .nav-links a,
+  .nav-links button {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    width: auto;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .sidebar-tools {
+    display: none;
+  }
+
+  .nav-links a span,
+  .nav-links button span {
+    display: none;
   }
 
   .nav-links a,
   .nav-links button {
     justify-content: center;
     padding: 0.5rem;
-    font-size: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
   }
 
   .nav-links a svg,
   .nav-links button svg {
-    font-size: 1.2rem;
-  }
-
-  .sidebar-tools {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .top-nav {
-    justify-content: center;
-  }
-
-  .app-title {
-    display: none;
+    font-size: 1.8rem;
   }
 }

@@ -37,28 +37,32 @@ const NavigationMenu = () => {
       <ul className="nav-links">
         <li>
           <NavLink to="/dashboard">
-            <FaTachometerAlt /> Dashboard
+            <FaTachometerAlt />
+            <span>Dashboard</span>
           </NavLink>
         </li>
         <li>
           <NavLink to="/profile">
-            <FaUser /> Profile
+            <FaUser />
+            <span>Profile</span>
           </NavLink>
         </li>
         <li>
           <NavLink to="/resume">
-            <FaFileAlt /> Resume
+            <FaFileAlt />
+            <span>Resume</span>
           </NavLink>
         </li>
         <li>
           <NavLink to="/jobs">
-            <FaBriefcase /> Jobs
+            <FaBriefcase />
+            <span>Jobs</span>
           </NavLink>
         </li>
-
         <li>
           <button onClick={handleLogout}>
-            <FaSignOutAlt /> Log Out
+            <FaSignOutAlt />
+            <span>Log Out</span>
           </button>
         </li>
       </ul>

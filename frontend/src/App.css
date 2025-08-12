@@ -1,29 +1,29 @@
-/* App.css — keep only layout/component-specific styles */
-
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1rem;
   text-align: left;
+  box-sizing: border-box;
 }
 
-.main-content {
-  min-height: 100vh;
+.main-container {
+  margin-top: 80px;
+  margin-left: 220px;
+  max-width: calc(100% - 220px);
+  padding: 1rem 2rem;
   box-sizing: border-box;
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(64, 131, 155, 0.12);
 }
 
 .header {
   background-color: var(--color-main);
-  text-align: left;
   padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   border-radius: 1rem 1rem 0 0;
   box-shadow: 0 2px 8px rgba(64, 131, 155, 0.08);
+  box-sizing: border-box;
+  font-size: 1rem;
 }
 
 .login-container {
@@ -33,6 +33,7 @@
   padding: 2rem 2.5rem;
   border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(64, 131, 155, 0.15);
+  box-sizing: border-box;
 }
 
 .login-title {
@@ -52,7 +53,9 @@ select {
   font-size: 1rem;
   background: #f1f5f9;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
+
 input:focus,
 select:focus {
   border-color: var(--color-tertiary);
@@ -68,6 +71,7 @@ select:focus {
   text-decoration: none;
   transition: color 0.2s;
 }
+
 .new-user-link:hover {
   color: var(--color-accent);
   text-decoration: underline;
@@ -79,6 +83,7 @@ select:focus {
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em rgba(175, 30, 35, 0.4));
 }
@@ -88,13 +93,93 @@ select:focus {
   background: #fff;
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(64, 131, 155, 0.08);
+  box-sizing: border-box;
 }
 
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   background: #e5e7eb;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1024px) {
+  .main-container {
+    margin-left: 220px;
+    max-width: calc(100% - 220px);
+    padding: 1rem 1.5rem;
+    margin-top: 80px;
+  }
+  .header {
+    padding: 1rem 1.5rem;
+  }
+  .login-container {
+    max-width: 90%;
+    padding: 1.5rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 1rem;
+    margin-top: 0;
+  }
+  .header {
+    flex-wrap: wrap;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  .login-container {
+    max-width: 100%;
+    padding: 1.5rem 1.5rem;
+    margin: 2rem 1rem;
+  }
+  .login-title {
+    font-size: 1.5rem;
+  }
+  .logo {
+    height: 3.5em;
+    padding: 0.5em;
+  }
+  input,
+  select {
+    font-size: 0.9rem;
+  }
+}
+
+/* Smallest screens */
+@media (max-width: 480px) {
+  .main-container {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 0.75rem 1rem;
+    margin-top: 80px;
+  }
+  .header {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  .login-container {
+    margin: 1rem 0.5rem;
+    padding: 1rem 1rem;
+  }
+  .login-title {
+    font-size: 1.25rem;
+  }
+  input,
+  select {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .logo {
+    height: 3em;
+    padding: 0.3em;
+  }
 }
