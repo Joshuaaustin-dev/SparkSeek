@@ -30,7 +30,11 @@ const Signup = () => {
     }
 
     try {
-      await axios.post("/api/auth/signup", form);
+      const res = await axios.post("/api/auth/signup", form);
+      // store role for consistency
+      if (res.data?.user?.role) {
+        localStorage.setItem("role", res.data.user.role);
+      }
       setMessage("Signup successful! Redirecting to login...");
       setHasError(false);
       setTimeout(() => {

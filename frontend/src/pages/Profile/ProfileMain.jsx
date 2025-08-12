@@ -3,6 +3,7 @@ import axios from "axios";
 import ResumeSection from "./ResumeSection";
 import JobSeekerDetails from "./JobSeekerDetails";
 import ProfileEditForm from "./ProfileEditForm";
+import RecruiterDetails from "./RecruiterDetails";
 import "./ProfileMain.css";
 
 const DEFAULT_PROFILE_PIC = "/profilePlaceholder.jpg";

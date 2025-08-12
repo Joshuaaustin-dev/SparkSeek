@@ -31,6 +31,10 @@ const Login = ({ onLogin }) => {
     try {
       const response = await axios.post("/api/auth/login", { email, password });
       localStorage.setItem("token", response.data.token);
+      // Persist role for role-based routing/menus
+      if (response.data?.user?.role) {
+        localStorage.setItem("role", response.data.user.role);
+      }
       onLogin();
 
       setMessage("Login successful! Redirecting...");

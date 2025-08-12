@@ -21,15 +21,19 @@ import ConversationList from "./pages/Messaging/ConversationsList";
 import MessagingWindow from "./pages/Messaging/MessagingWindow";
 import "./App.css";
 import Users from "./pages/Users/Users";
+import RecruiterDashboard from "./pages/Dashboard/RecruiterDashboard";
 
 function AppWrapper() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedRole = localStorage.getItem("role");
+    if (storedRole) setRole(storedRole);
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -68,7 +72,7 @@ function AppWrapper() {
           <Routes>
             <Route
               path="/"
-              element={<Login onLogin={() => setIsAuthenticated(true)} />}
+              element={<Login onLogin={() => { setIsAuthenticated(true); setRole(localStorage.getItem("role")); }} />}
             />
             <Route
               path="/signup"
@@ -78,7 +82,7 @@ function AppWrapper() {
               path="/dashboard"
               element={
                 isAuthenticated ? (
-                  <DashboardMain />
+                  role === "recruiter" ? <RecruiterDashboard /> : <DashboardMain />
                 ) : (
                   <Navigate to="/" replace />
                 )
@@ -93,7 +97,11 @@ function AppWrapper() {
             <Route
               path="/resume"
               element={
-                isAuthenticated ? <ResumeMain /> : <Navigate to="/" replace />
+                isAuthenticated ? (
+                  role === "recruiter" ? <Navigate to="/dashboard" replace /> : <ResumeMain />
+                ) : (
+                  <Navigate to="/" replace />
+                )
               }
             />
             <Route

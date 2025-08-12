@@ -15,6 +15,8 @@ const Users = () => {
   const firstCardRef = useRef(null);
   const messageTextareaRef = useRef(null);
 
+  const currentRole = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -23,7 +25,14 @@ const Users = () => {
         const res = await axios.get("/api/users/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUsers(res.data);
+        let list = res.data;
+        // Role-aware filtering: recruiters see seekers, seekers see recruiters
+        if (currentRole === "recruiter") {
+          list = list.filter((u) => u.role === "seeker");
+        } else if (currentRole === "seeker") {
+          list = list.filter((u) => u.role === "recruiter");
+        }
+        setUsers(list);
       } catch (err) {
         console.error("Failed to fetch users", err);
         setError("Failed to load users. Please try again.");
@@ -32,7 +41,7 @@ const Users = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [currentRole]);
 
   // Focus management for accessibility
   useEffect(() => {

@@ -17,8 +17,11 @@ const NavigationMenu = () => {
   const navigate = useNavigate();
   const { theme, toggle } = useDarkMode();
 
+  const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
 
     //remove job search filters
     localStorage.removeItem("jobs_query");
@@ -38,7 +41,7 @@ const NavigationMenu = () => {
         <li>
           <NavLink to="/dashboard">
             <FaTachometerAlt />
-            <span>Dashboard</span>
+            <span>{role === "recruiter" ? "Recruiter Home" : "Dashboard"}</span>
           </NavLink>
         </li>
         <li>
@@ -47,16 +50,18 @@ const NavigationMenu = () => {
             <span>Profile</span>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/resume">
-            <FaFileAlt />
-            <span>Resume</span>
-          </NavLink>
-        </li>
+        {role !== "recruiter" && (
+          <li>
+            <NavLink to="/resume">
+              <FaFileAlt />
+              <span>Resume</span>
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink to="/jobs">
             <FaBriefcase />
-            <span>Jobs</span>
+            <span>{role === "recruiter" ? "Find Talent" : "Jobs"}</span>
           </NavLink>
         </li>
         <li>
