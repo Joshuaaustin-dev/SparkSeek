@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./jobInfoCard.css";
+import "./JobInfoCard.css";
 
 function JobInfoCard() {
   const { jobId } = useParams();

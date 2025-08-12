@@ -7,17 +7,7 @@ const DashboardJobCard = ({ job }) => {
   return (
     <>
       <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: 8,
-          padding: 12,
-          marginBottom: 10,
-          backgroundColor: "#fff",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-          cursor: "pointer",
-          userSelect: "none",
-          transition: "box-shadow 0.2s ease",
-        }}
+        className="job-card"
         onClick={() => setShowDetails(true)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -28,73 +18,21 @@ const DashboardJobCard = ({ job }) => {
         role="button"
         tabIndex={0}
         aria-label={`${job.title} at ${job.company}, click for details`}
+        title={`${job.title} • ${job.company}`}
       >
-        <h4
-          style={{
-            margin: "0 0 6px 0",
-            fontSize: "1rem",
-            color: "#222",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-          title={job.title}
-        >
+        <h4 className="job-card-title" title={job.title}>
           {job.title}
         </h4>
-        <p
-          style={{
-            margin: 0,
-            fontSize: 13,
-            color: "#666",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-          title={job.company}
-        >
+        <p className="job-card-company" title={job.company}>
           {job.company}
         </p>
       </div>
       {showDetails && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.6)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-          onClick={() => setShowDetails(false)}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: 20,
-              borderRadius: 8,
-              maxWidth: 600,
-              maxHeight: "90vh",
-              overflowY: "auto",
-              position: "relative",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setShowDetails(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowDetails(false)}
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                fontSize: 18,
-                cursor: "pointer",
-                border: "none",
-                background: "none",
-              }}
+              className="modal-close-btn"
               aria-label="Close job details"
             >
               &times;
