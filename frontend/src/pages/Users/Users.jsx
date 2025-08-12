@@ -175,12 +175,12 @@ const Users = () => {
                 ref={index === 0 ? firstCardRef : null}
               >
                 <div className="user-card-body">
-                  <img
-                    src={user.profilePictureUrl || "/profilePlaceholder.jpg"}
-                    className="user-img rounded-circle mx-auto d-block"
-                    alt={user.name}
-                    loading="lazy"
-                  />
+                                      <img
+                      src={user.profilePic ? `/${user.profilePic}` : "/profilePlaceholder.jpg"}
+                      className="user-img rounded-circle mx-auto d-block"
+                      alt={user.name}
+                      loading="lazy"
+                    />
                   <h5 className="user-name">{user.name}</h5>
                   <p className="user-role">{user.role}</p>
                 </div>
@@ -212,7 +212,7 @@ const Users = () => {
 
             <div className="modal-header">
               <img
-                src={selected.profilePictureUrl || "/profilePlaceholder.jpg"}
+                src={selected.profilePic ? `/${selected.profilePic}` : "/profilePlaceholder.jpg"}
                 alt={selected.name}
                 className="user-img-large rounded-circle mx-auto d-block"
               />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-// import { io } from "socket.io-client";
+import { io } from "socket.io-client";
 
 const api = axios.create({
   baseURL: "/api/messages",
@@ -10,6 +10,7 @@ export default function MessagingWindow({ currentUserId, otherUserId }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const bottomRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -28,10 +29,34 @@ export default function MessagingWindow({ currentUserId, otherUserId }) {
     }
 
     load();
-    const id = setInterval(load, 3000);
+
+    // Setup socket for realtime updates
+    const token = localStorage.getItem("token");
+    const socket = io("/", { auth: { token } });
+    socketRef.current = socket;
+
+    socket.on("connect_error", (err) => {
+      console.error("Socket connect error:", err.message);
+    });
+
+    socket.on("message:new", (payload) => {
+      const { message } = payload;
+      // Only append if it's from or to the otherUserId in this window
+      if (
+        String(message.sender) === String(otherUserId) ||
+        String(message.recipient) === String(otherUserId)
+      ) {
+        setMessages((prev) => [...prev, message]);
+        scrollToBottom();
+      }
+    });
+
     return () => {
       alive = false;
-      clearInterval(id);
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
   }, [currentUserId, otherUserId]);
 

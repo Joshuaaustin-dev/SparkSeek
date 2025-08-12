@@ -19,6 +19,7 @@ import JobInfoCard from "./pages/Jobs/JobInfoCard";
 import UserPage from "./pages/Users/Users";
 import MessagingWindow from "./pages/Messaging/MessagingWindow";
 import MessagingPage from "./pages/Messaging/MessagingPage";
+import ConversationsPage from "./pages/Messaging/ConversationsPage";
 import "./App.css";
 import Users from "./pages/Users/Users";
 
@@ -107,7 +108,7 @@ function AppWrapper() {
               }
             />
             <Route path="/users" element={<UserPage />} />
-            <Route path="/messages" element={<MessagingWindow />} />
+            <Route path="/messages" element={<ConversationsPage />} />
             <Route path="/messages/:otherUserId" element={<MessagingPage />} />
           </Routes>
         </div>

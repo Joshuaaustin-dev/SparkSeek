@@ -1,5 +1,5 @@
 import "./NavigationMenu";
-import logo from "../../assets/logoNoTitle.png";
+import logo from "../../assets/LogoNoTitle.PNG";
 import { FaEnvelope, FaBell, FaMoon } from "react-icons/fa";
 
 const TopNav = () => {
