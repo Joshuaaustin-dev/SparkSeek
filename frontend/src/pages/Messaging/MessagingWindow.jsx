@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+// import { io } from "socket.io-client";
 
 const api = axios.create({
   baseURL: "/api/messages",
-  withCredentials: true,
 });
 
 export default function MessagingWindow({ currentUserId, otherUserId }) {
@@ -16,7 +16,10 @@ export default function MessagingWindow({ currentUserId, otherUserId }) {
 
     async function load() {
       try {
-        const { data } = await api.get(`/${currentUserId}/${otherUserId}`);
+        const token = localStorage.getItem("token");
+        const { data } = await api.get(`/${currentUserId}/${otherUserId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (alive) setMessages(data);
         scrollToBottom();
       } catch (err) {
@@ -42,13 +45,15 @@ export default function MessagingWindow({ currentUserId, otherUserId }) {
     if (!trimmed) return;
 
     try {
+      const token = localStorage.getItem("token");
       const payload = {
-        sender: currentUserId,
-        recipient: otherUserId,
-        content: trimmed,
+        to: otherUserId,
+        message: trimmed,
       };
-      const { data } = await api.post("/", payload);
-      setMessages((prev) => [...prev, data]);
+      const { data } = await api.post("/send", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMessages((prev) => [...prev, data.message]);
       setNewMessage("");
       scrollToBottom();
     } catch (err) {
@@ -59,30 +64,22 @@ export default function MessagingWindow({ currentUserId, otherUserId }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-        <AnimatePresence initial={false}>
-          {messages.map((msg) => {
-            const isMe = msg.sender.toString() === currentUserId.toString();
-            return (
-              <motion.div
-                key={msg._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className={`max-w-sm rounded-2xl shadow p-3 ${
-                  isMe
-                    ? "bg-primary text-primary-foreground ml-auto"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                <p className="text-base break-words">{msg.content}</p>
-                <span className="block text-xs mt-1 opacity-70">
-                  {new Date(msg.sentAt).toLocaleTimeString()}
-                </span>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+        {messages.map((msg) => {
+          const isMe = msg.sender.toString() === currentUserId.toString();
+          return (
+            <div
+              key={msg._id}
+              className={`max-w-sm rounded-2xl shadow p-3 ${
+                isMe ? "bg-primary text-primary-foreground ml-auto" : "bg-muted text-muted-foreground"
+              }`}
+            >
+              <p className="text-base break-words">{msg.content}</p>
+              <span className="block text-xs mt-1 opacity-70">
+                {new Date(msg.sentAt).toLocaleTimeString()}
+              </span>
+            </div>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
 

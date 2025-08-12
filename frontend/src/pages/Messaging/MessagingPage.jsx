@@ -4,8 +4,17 @@ import MessagingWindow from "./MessagingWindow";
 export default function MessagingPage() {
   const { otherUserId } = useParams();
 
-  // TODO: Replace with real logged-in user ID from context or auth
-  const currentUserId = "YOUR_LOGGED_IN_USER_ID";
+  // Derive logged-in user ID from JWT
+  let currentUserId = null;
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      currentUserId = payload.id;
+    } catch (e) {
+      console.error("Invalid token", e);
+    }
+  }
 
   if (!currentUserId) return <div>Loading user...</div>;
 

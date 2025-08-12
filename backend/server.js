@@ -3,6 +3,9 @@ require('dotenv').config();
 const express = require('express'); //Express framework to create server/handle routing
 const mongoose = require('mongoose'); //Mongoose to interact with MongoDB in an object-oriented way
 const cors = require('cors'); //CORS middleware to allow cross-origin requests
+const http = require('http');
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 
 //Create express application instance
 const app = express(); 
@@ -50,7 +53,42 @@ app.get('/api', (req, res) => {
     res.send('Server is running!');
 });
 
-//Start the express server listening on PORT 5000
-app.listen(PORT, () => {
+// HTTP server + Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_ORIGIN || '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+// Socket auth using JWT provided as handshake auth.token
+io.use((socket, next) => {
+  const token = socket.handshake.auth && socket.handshake.auth.token;
+  if (!token) return next(new Error('Unauthorized'));
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    socket.userId = payload.id;
+    next();
+  } catch (e) {
+    next(new Error('Unauthorized'));
+  }
+});
+
+io.on('connection', (socket) => {
+  if (socket.userId) {
+    socket.join(`user:${socket.userId}`);
+  }
+
+  socket.on('disconnect', () => {
+    // cleanup if needed
+  });
+});
+
+// Make io available in routes
+app.set('io', io);
+
+//Start the express server listening
+server.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
