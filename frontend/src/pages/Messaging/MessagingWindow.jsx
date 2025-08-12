@@ -1,101 +1,346 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import io from "socket.io-client";
+import { FaVideo, FaPhone } from "react-icons/fa";
 
-const api = axios.create({
-  baseURL: "/api/messages",
-  withCredentials: true,
-});
+import "./MessagingWindow.css";
 
-export default function MessagingWindow({ currentUserId, otherUserId }) {
+const MessagingWindow = () => {
+  const { otherUserId } = useParams();
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const bottomRef = useRef(null);
+  const [otherUser, setOtherUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
+
+  const messagesEndRef = useRef(null);
+  const messageInputRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+
+  // Get conversation ID
+  const getConversationId = (userId1, userId2) => {
+    return [userId1, userId2].sort().join("_");
+  };
+
+  // Generate unique Jitsi room name
+  const generateRoomName = (userId1, userId2) => {
+    return [userId1, userId2].sort().join("-");
+  };
+
+  // Open Jitsi video call in new tab
+  const handleStartVideoCall = () => {
+    if (!currentUser || !otherUser) return;
+    const roomName = generateRoomName(currentUser._id, otherUser._id);
+    const jitsiUrl = `https://meet.jit.si/${roomName}`;
+    window.open(jitsiUrl, "_blank");
+  };
+
+  // Scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    let alive = true;
+    scrollToBottom();
+  }, [messages]);
 
-    async function load() {
-      try {
-        const { data } = await api.get(`/${currentUserId}/${otherUserId}`);
-        if (alive) setMessages(data);
-        scrollToBottom();
-      } catch (err) {
-        console.error("Failed to load messages", err);
+  // Initialize socket connection
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const newSocket = io(import.meta.env.VITE_BASE_URL, {
+      auth: { token },
+    });
+
+    newSocket.on("newMessage", (messageData) => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          _id: Date.now().toString(),
+          sender: { _id: messageData.sender },
+          content: messageData.content,
+          timestamp: messageData.timestamp,
+        },
+      ]);
+    });
+
+    newSocket.on("userTyping", (data) => {
+      if (data.userId === otherUserId) {
+        setOtherUserTyping(true);
       }
-    }
+    });
 
-    load();
-    const id = setInterval(load, 3000);
+    newSocket.on("userStoppedTyping", (data) => {
+      if (data.userId === otherUserId) {
+        setOtherUserTyping(false);
+      }
+    });
+
+    setSocket(newSocket);
+
     return () => {
-      alive = false;
-      clearInterval(id);
+      newSocket.close();
     };
-  }, [currentUserId, otherUserId]);
+  }, [otherUserId, navigate]);
 
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    const trimmed = newMessage.trim();
-    if (!trimmed) return;
+        // Get current user
+        const userRes = await axios.get("/api/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCurrentUser(userRes.data);
 
+        // Get other user info
+        const otherUserRes = await axios.get(`/api/users/${otherUserId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOtherUser(otherUserRes.data);
+
+        // Get conversation messages
+        const messagesRes = await axios.get(
+          `/api/messages/conversation/${otherUserId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setMessages(messagesRes.data.messages || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (otherUserId) {
+      fetchData();
+    }
+  }, [otherUserId]);
+
+  // Handle sending message
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || sending) return;
+
+    setSending(true);
     try {
-      const payload = {
-        sender: currentUserId,
-        recipient: otherUserId,
-        content: trimmed,
-      };
-      const { data } = await api.post("/", payload);
-      setMessages((prev) => [...prev, data]);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "/api/messages/send",
+        {
+          to: otherUserId,
+          message: newMessage.trim(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Add message to local state immediately
+      setMessages((prev) => [...prev, response.data.data]);
       setNewMessage("");
-      scrollToBottom();
-    } catch (err) {
-      console.error("Failed to send message", err);
+
+      // Send via socket for real-time delivery
+      if (socket) {
+        socket.emit("sendMessage", {
+          recipientId: otherUserId,
+          content: newMessage.trim(),
+          conversationId: getConversationId(currentUser._id, otherUserId),
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setSending(false);
     }
   };
+
+  // Handle typing indicators
+  const handleTyping = () => {
+    if (!socket || !currentUser) return;
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", {
+        recipientId: otherUserId,
+        conversationId: getConversationId(currentUser._id, otherUserId),
+      });
+    }
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set timeout to stop typing
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      socket.emit("stopTyping", {
+        recipientId: otherUserId,
+        conversationId: getConversationId(currentUser._id, otherUserId),
+      });
+    }, 1000);
+  };
+
+  // Handle key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    } else {
+      handleTyping();
+    }
+  };
+
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="messaging-container">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+          <span>Loading conversation...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!otherUser || !currentUser) {
+    return (
+      <div className="messaging-container">
+        <div className="error-state">
+          <h3>User not found</h3>
+          <button onClick={() => navigate("/users")} className="back-btn">
+            Back to Users
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-        <AnimatePresence initial={false}>
-          {messages.map((msg) => {
-            const isMe = msg.sender.toString() === currentUserId.toString();
-            return (
-              <motion.div
-                key={msg._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className={`max-w-sm rounded-2xl shadow p-3 ${
-                  isMe
-                    ? "bg-primary text-primary-foreground ml-auto"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                <p className="text-base break-words">{msg.content}</p>
-                <span className="block text-xs mt-1 opacity-70">
-                  {new Date(msg.sentAt).toLocaleTimeString()}
-                </span>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-        <div ref={bottomRef} />
+    <div className="messaging-container">
+      {/* Header */}
+      <div className="messaging-header" style={{ position: "relative" }}>
+        <button onClick={() => navigate("/conversations")} className="back-btn">
+          ← Back
+        </button>
+        <div className="other-user-info">
+          <img
+            src={
+              otherUser.profilePic
+                ? `${import.meta.env.VITE_BASE_URL}/${otherUser.profilePic}`
+                : "/profilePlaceholder.jpg"
+            }
+            alt={otherUser.name}
+            className="user-avatar"
+          />
+          <div>
+            <h3>{otherUser.name}</h3>
+            <p>{otherUser.role}</p>
+          </div>
+        </div>
+        {/* Video Call Button */}
+        <button
+          onClick={handleStartVideoCall}
+          className="video-call-btn"
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "10px",
+            padding: "6px 12px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          <FaVideo />
+        </button>
       </div>
 
-      <form onSubmit={handleSend} className="border-t p-4 flex gap-2">
-        <input
-          placeholder="Type a message…"
+      {/* Messages */}
+      <div className="messages-container">
+        {messages.length === 0 ? (
+          <div className="empty-messages">
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        ) : (
+          messages.map((message) => (
+            <div
+              key={message._id}
+              className={`message ${
+                message.sender._id === currentUser._id
+                  ? "own-message"
+                  : "other-message"
+              }`}
+            >
+              <div className="message-content">{message.content}</div>
+              <div className="message-time">
+                {formatTime(message.timestamp)}
+              </div>
+            </div>
+          ))
+        )}
+
+        {otherUserTyping && (
+          <div className="typing-indicator">
+            <div className="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span>{otherUser.name} is typing...</span>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Message Input */}
+      <div className="message-input-container">
+        <textarea
+          ref={messageInputRef}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1"
-          autoComplete="off"
+          onKeyPress={handleKeyPress}
+          placeholder={`Message ${otherUser.name}...`}
+          rows={1}
+          className="message-input"
+          maxLength={1000}
         />
-        <button type="submit">Send</button>
-      </form>
+        <button
+          onClick={handleSendMessage}
+          disabled={!newMessage.trim() || sending}
+          className="send-btn"
+        >
+          {sending ? "Sending..." : "Send"}
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default MessagingWindow;

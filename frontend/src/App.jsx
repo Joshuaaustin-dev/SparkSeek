@@ -17,8 +17,8 @@ import ResumeMain from "./pages/Resume/ResumeMain";
 import Jobs from "./pages/Jobs/Jobs";
 import JobInfoCard from "./pages/Jobs/JobInfoCard";
 import UserPage from "./pages/Users/Users";
+import ConversationList from "./pages/Messaging/ConversationsList";
 import MessagingWindow from "./pages/Messaging/MessagingWindow";
-import MessagingPage from "./pages/Messaging/MessagingPage";
 import "./App.css";
 import Users from "./pages/Users/Users";
 
@@ -107,8 +107,11 @@ function AppWrapper() {
               }
             />
             <Route path="/users" element={<UserPage />} />
-            <Route path="/messages" element={<MessagingWindow />} />
-            <Route path="/messages/:otherUserId" element={<MessagingPage />} />
+            <Route path="/conversations" element={<ConversationList />} />
+            <Route
+              path="/messages/:otherUserId"
+              element={<MessagingWindow />}
+            />
           </Routes>
         </div>
       </div>

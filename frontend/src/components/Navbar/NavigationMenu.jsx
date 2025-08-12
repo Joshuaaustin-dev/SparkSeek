@@ -66,8 +66,8 @@ const NavigationMenu = () => {
         <NavLink to="/users">
           <FaUsers className="tool-icon" title="Users" />
         </NavLink>
-        <NavLink to="/messages">
-          <FaCommentDots className="tool-icon" title="Messages" />
+        <NavLink to="/conversations">
+          <FaCommentDots className="tool-icon" title="Conversations" />
         </NavLink>{" "}
         {/* moon/sun icon switches with theme */}
         {theme === "light" ? (

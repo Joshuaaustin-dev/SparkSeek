@@ -1,11 +1,22 @@
-//load environment variables from .env
-require('dotenv').config(); 
+require('dotenv').config(); //load environment variables from .env
 const express = require('express'); //Express framework to create server/handle routing
 const mongoose = require('mongoose'); //Mongoose to interact with MongoDB in an object-oriented way
 const cors = require('cors'); //CORS middleware to allow cross-origin requests
+const http = require('http'); //HTTP module to create server
+const socketIO = require('socket.io'); //Socket.IO for real-time communication
+const jwt = require('jsonwebtoken'); //JWT for authentication
 
 //Create express application instance
 const app = express(); 
+const server = http.createServer(app); 
+
+// Socket.IO setup with CORS
+const io = socketIO(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL,// Adjust for your frontend URL
+    methods: ["GET", "POST"]
+  }
+});
 
 //handle static files
 const path = require("path");
@@ -19,6 +30,92 @@ app.use(express.json());
 
 //enable CORS for all origins
 app.use(cors());
+
+// Store connected users
+const connectedUsers = new Map();
+
+// Socket.IO authentication middleware
+io.use((socket, next) => {
+  try {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+      return next(new Error('Authentication error'));
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.userId = decoded.id;
+    next();
+  } catch (err) {
+    next(new Error('Authentication error'));
+  }
+});
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log(`User ${socket.userId} connected`);
+  
+  // Store user connection
+  connectedUsers.set(socket.userId, socket.id);
+  
+  // Join user to their own room for receiving messages
+  socket.join(socket.userId);
+
+  // Handle sending messages
+  socket.on('sendMessage', async (data) => {
+    try {
+      const { recipientId, content, conversationId } = data;
+      
+      // Emit to recipient if they're online
+      const recipientSocketId = connectedUsers.get(recipientId);
+      if (recipientSocketId) {
+        io.to(recipientId).emit('newMessage', {
+          sender: socket.userId,
+          content,
+          conversationId,
+          timestamp: new Date()
+        });
+      }
+      
+      // Confirm message sent to sender
+      socket.emit('messageSent', { success: true });
+      
+    } catch (error) {
+      socket.emit('messageError', { error: 'Failed to send message' });
+    }
+  });
+
+  // Handle typing indicators
+  socket.on('typing', (data) => {
+    const { recipientId, conversationId } = data;
+    const recipientSocketId = connectedUsers.get(recipientId);
+    if (recipientSocketId) {
+      io.to(recipientId).emit('userTyping', {
+        userId: socket.userId,
+        conversationId
+      });
+    }
+  });
+
+  socket.on('stopTyping', (data) => {
+    const { recipientId, conversationId } = data;
+    const recipientSocketId = connectedUsers.get(recipientId);
+    if (recipientSocketId) {
+      io.to(recipientId).emit('userStoppedTyping', {
+        userId: socket.userId,
+        conversationId
+      });
+    }
+  });
+
+  // Handle disconnect
+  socket.on('disconnect', () => {
+    console.log(`User ${socket.userId} disconnected`);
+    connectedUsers.delete(socket.userId);
+  });
+});
+
+// Make io accessible to routes
+app.set('io', io);
 
 //Routes
 const authRoutes = require('./routes/authRoutes');
@@ -51,6 +148,6 @@ app.get('/api', (req, res) => {
 });
 
 //Start the express server listening on PORT 5000
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
