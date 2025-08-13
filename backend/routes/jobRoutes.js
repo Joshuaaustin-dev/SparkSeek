@@ -97,7 +97,6 @@ router.post("/track", auth, async (req, res) => {
 
 //get tracked jobs for the user
 router.get("/my-jobs", auth, async (req, res) => { 
-
   try {
     const jobs = await TrackedJob.find({ userId: req.user._id });
     res.json(jobs);
@@ -113,8 +112,8 @@ router.put("/update-status/:id", auth, async (req, res) => {
   const updateFields = { ...req.body }; // Accept all fields from the body
 
   try {
-    const updatedJob = await TrackedJob.findByIdAndUpdate(
-      jobId,
+    const updatedJob = await TrackedJob.findOneAndUpdate(
+      { _id: jobId, userId: req.user._id },
       updateFields,
       { new: true }
     );
