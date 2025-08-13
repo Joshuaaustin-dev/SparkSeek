@@ -138,8 +138,9 @@ if (process.env.NODE_ENV === 'production') {
   // Serve static files from Vite build (dist folder)
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
   
-  // Handle React Router - send all non-API requests to React
-  app.get('*', (req, res) => {
+  // Serve SPA index.html for all non-API routes without using path patterns
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
   });
 } else {
