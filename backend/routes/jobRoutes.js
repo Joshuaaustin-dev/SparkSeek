@@ -110,17 +110,17 @@ router.get("/my-jobs", auth, async (req, res) => {
 // Update a tracked job's status
 router.put("/update-status/:id", auth, async (req, res) => {
   const jobId = req.params.id;
-  const updateFields = { ...req.body }; // Accept all fields from the body
+  const updateFields = { ...req.body };
 
   try {
-    const updatedJob = await TrackedJob.findByIdAndUpdate(
-      jobId,
+    const updatedJob = await TrackedJob.findOneAndUpdate(
+      { _id: jobId, userId: req.user._id },
       updateFields,
       { new: true }
     );
 
     if (!updatedJob) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: "Job not found or not authorized" });
     }
 
     res.json(updatedJob);
@@ -133,9 +133,9 @@ router.put("/update-status/:id", auth, async (req, res) => {
 // Delete a tracked job
 router.delete("/:id", auth, async (req, res) => {
   try {
-    const job = await TrackedJob.findByIdAndDelete(req.params.id);
+    const job = await TrackedJob.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: "Job not found or not authorized" });
     }
     res.json({ message: "Job deleted" });
   } catch (err) {
