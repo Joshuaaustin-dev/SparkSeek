@@ -1,5 +1,6 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import DashboardJobCard from "./DashboardJobCard";
+import "./JobBoard.css";
 
 const JobBoard = ({ columns, stageMapping, onDragEnd }) => {
   return (
@@ -13,7 +14,9 @@ const JobBoard = ({ columns, stageMapping, onDragEnd }) => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`job-droppable ${snapshot.isDraggingOver ? "is-dragging-over" : ""}`}
+                  className={`job-droppable ${
+                    snapshot.isDraggingOver ? "is-dragging-over" : ""
+                  }`}
                 >
                   {jobs.length === 0 && (
                     <p className="job-empty">No applications</p>
@@ -25,7 +28,9 @@ const JobBoard = ({ columns, stageMapping, onDragEnd }) => {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className={`job-draggable ${snapshot.isDragging ? "is-dragging" : ""}`}
+                          className={`job-draggable ${
+                            snapshot.isDragging ? "is-dragging" : ""
+                          }`}
                           style={provided.draggableProps.style}
                         >
                           <DashboardJobCard job={job} />

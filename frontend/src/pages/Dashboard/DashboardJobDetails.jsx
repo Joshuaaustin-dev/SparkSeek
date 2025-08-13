@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./DashboardJobCard.css";
 
 const DashboardJobDetails = ({ job, onJobUpdated, onJobDeleted }) => {
   const [editMode, setEditMode] = useState(false);
@@ -54,87 +55,95 @@ const DashboardJobDetails = ({ job, onJobUpdated, onJobDeleted }) => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">{localJob.title || localJob.title}</h2>
-      <h4 className="my-2 text-gray-600">{localJob.company}</h4>
+    <div className="job-details">
+      <div className="job-details-header">
+        <h2 className="job-details-title">{localJob.title}</h2>
+        <h4 className="job-details-company">{localJob.company}</h4>
+      </div>
 
-      {localJob.location && (
-        <p>
-          <strong>Location:</strong> {localJob.location}
-        </p>
-      )}
+      <div className="job-details-info">
+        {localJob.location && (
+          <p>
+            <strong>Location:</strong> {localJob.location}
+          </p>
+        )}
 
-      {localJob.salary_min && localJob.salary_max && (
-        <p>
-          <strong>Salary Range:</strong> $
-          {Number(localJob.salary_min).toLocaleString()} – $
-          {Number(localJob.salary_max).toLocaleString()}
-        </p>
-      )}
+        {localJob.salary_min && localJob.salary_max && (
+          <p>
+            <strong>Salary Range:</strong>{" "}
+            <span className="job-details-salary">
+              ${Number(localJob.salary_min).toLocaleString()} – $
+              {Number(localJob.salary_max).toLocaleString()}
+            </span>
+          </p>
+        )}
 
-      {localJob.status && (
-        <p>
-          <strong>Status:</strong> {localJob.status}
-        </p>
-      )}
+        {localJob.status && (
+          <p>
+            <strong>Status:</strong>
+            <span className="job-details-status">{localJob.status}</span>
+          </p>
+        )}
+      </div>
 
-      <div className="my-4">
-        <strong>Description:</strong>
+      <div className="job-description-section">
+        <label className="job-description-label">Description:</label>
         {editMode ? (
           <div>
             <input
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.title || ""}
               onChange={(e) => onFieldChange("title", e.target.value)}
               placeholder="Job Title"
             />
             <input
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.company || ""}
               onChange={(e) => onFieldChange("company", e.target.value)}
               placeholder="Company"
             />
             <input
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.location || ""}
               onChange={(e) => onFieldChange("location", e.target.value)}
               placeholder="Location"
             />
             <input
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.applyUrl || ""}
               onChange={(e) => onFieldChange("applyUrl", e.target.value)}
-              placeholder="Company Site"
+              placeholder="Apply URL"
             />
             <input
               type="number"
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.salary_min || ""}
               onChange={(e) => onFieldChange("salary_min", e.target.value)}
               placeholder="Salary Min"
             />
             <input
               type="number"
-              className="w-full border mb-2 p-2 rounded"
+              className="job-edit-input"
               value={localJob.salary_max || ""}
               onChange={(e) => onFieldChange("salary_max", e.target.value)}
               placeholder="Salary Max"
             />
             <textarea
-              className="mt-1 max-h-40 min-h-[80px] w-full overflow-y-auto rounded bg-gray-50 p-3 border border-gray-200 text-sm"
+              className="job-edit-textarea"
               value={localJob.description || ""}
               onChange={(e) => onFieldChange("description", e.target.value)}
+              placeholder="Job description..."
             />
-            <div className="flex gap-2 mt-2">
+            <div className="job-button-group">
               <button
-                className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                className="job-btn job-btn-primary"
                 onClick={handleSave}
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? "Saving..." : "Save Changes"}
               </button>
               <button
-                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-300"
+                className="job-btn job-btn-secondary"
                 onClick={() => {
                   setEditMode(false);
                   setLocalJob({ ...job });
@@ -146,55 +155,57 @@ const DashboardJobDetails = ({ job, onJobUpdated, onJobDeleted }) => {
             </div>
           </div>
         ) : (
-          <div className="mt-1 max-h-40 overflow-y-auto rounded bg-gray-50 p-3 border border-gray-200 text-sm whitespace-pre-wrap">
-            {localJob.description}
+          <div className="job-description-display">
+            {localJob.description || "No description provided."}
           </div>
         )}
       </div>
 
-      <div className="flex gap-3 mt-4">
+      <div className="job-button-group">
         <button
-          className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600"
+          className="job-btn job-btn-edit"
           onClick={() => setEditMode(true)}
           disabled={editMode}
         >
-          Edit
+          Edit Job
         </button>
         <button
-          className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+          className="job-btn job-btn-danger"
           onClick={handleDelete}
           disabled={deleting}
         >
-          {deleting ? "Deleting..." : "Delete"}
+          {deleting ? "Deleting..." : "Delete Job"}
         </button>
       </div>
 
-      {localJob.applyUrl && (
-        <p className="mt-4">
-          <strong>Apply:</strong>{" "}
-          <a
-            href={localJob.applyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            Visit application page
-          </a>
-        </p>
-      )}
+      {(localJob.applyUrl || localJob.employerWebsite) && (
+        <div className="job-details-links">
+          {localJob.applyUrl && (
+            <p>
+              <strong>Apply:</strong>{" "}
+              <a
+                href={localJob.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Visit application page →
+              </a>
+            </p>
+          )}
 
-      {localJob.employerWebsite && (
-        <p>
-          <strong>Employer Website:</strong>{" "}
-          <a
-            href={localJob.employerWebsite}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            {localJob.employerWebsite}
-          </a>
-        </p>
+          {localJob.employerWebsite && (
+            <p>
+              <strong>Employer Website:</strong>{" "}
+              <a
+                href={localJob.employerWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {localJob.employerWebsite} →
+              </a>
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

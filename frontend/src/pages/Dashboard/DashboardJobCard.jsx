@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DashboardJobDetails from "./DashboardJobDetails";
+import "./DashboardJobCard.css";
 
 const DashboardJobCard = ({ job }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -27,6 +28,7 @@ const DashboardJobCard = ({ job }) => {
           {job.company}
         </p>
       </div>
+
       {showDetails && (
         <div className="modal-overlay" onClick={() => setShowDetails(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -35,9 +37,20 @@ const DashboardJobCard = ({ job }) => {
               className="modal-close-btn"
               aria-label="Close job details"
             >
-              &times;
+              ×
             </button>
-            <DashboardJobDetails job={job} />
+            <DashboardJobDetails
+              job={job}
+              onJobUpdated={(updatedJob) => {
+                // Handle job update if needed
+                console.log("Job updated:", updatedJob);
+              }}
+              onJobDeleted={(deletedJobId) => {
+                // Handle job deletion and close modal
+                console.log("Job deleted:", deletedJobId);
+                setShowDetails(false);
+              }}
+            />
           </div>
         </div>
       )}

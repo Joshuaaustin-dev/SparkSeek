@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+// Import the stylesheet
+import "./JobForm.css";
 
 const initialState = {
   title: "",
@@ -44,80 +46,100 @@ const JobForm = ({ open, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <form
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative"
-        onSubmit={handleJobSubmit}
-      >
+    <div className="job-form-overlay">
+      <form className="job-form-container" onSubmit={handleJobSubmit}>
         <button
           type="button"
-          className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl"
+          className="job-form-close"
           onClick={onClose}
           aria-label="Close"
         >
           &times;
         </button>
-        <h2 className="text-xl font-bold mb-4 text-blue-900">Add Custom Job</h2>
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Job Title"
-          name="title"
-          value={jobForm.title}
-          onChange={handleChange}
-          required
-        />
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Company"
-          name="company"
-          value={jobForm.company}
-          onChange={handleChange}
-          required
-        />
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Location"
-          name="location"
-          value={jobForm.location}
-          onChange={handleChange}
-        />
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Apply URL"
-          name="applyUrl"
-          value={jobForm.applyUrl}
-          onChange={handleChange}
-        />
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Salary Min"
-          type="number"
-          name="salary_min"
-          value={jobForm.salary_min}
-          onChange={handleChange}
-        />
-        <input
-          className="w-full border border-blue-200 rounded-lg p-2 mb-3"
-          placeholder="Salary Max"
-          type="number"
-          name="salary_max"
-          value={jobForm.salary_max}
-          onChange={handleChange}
-        />
-        <textarea
-          className="w-full border border-blue-200 rounded-lg p-2 mb-4"
-          placeholder="Description"
-          rows={3}
-          name="description"
-          value={jobForm.description}
-          onChange={handleChange}
-        />
+
+        <h2 className="job-form-title">Track a Job</h2>
+
+        <div className="job-form-field-group">
+          <input
+            className="job-form-input"
+            placeholder="Job Title"
+            name="title"
+            value={jobForm.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="job-form-field-group">
+          <input
+            className="job-form-input"
+            placeholder="Company"
+            name="company"
+            value={jobForm.company}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="job-form-field-group">
+          <input
+            className="job-form-input"
+            placeholder="Location"
+            name="location"
+            value={jobForm.location}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="job-form-field-group">
+          <input
+            className="job-form-input"
+            placeholder="Apply URL"
+            name="applyUrl"
+            value={jobForm.applyUrl}
+            onChange={handleChange}
+            type="url"
+          />
+        </div>
+
+        <div className="job-form-field-row">
+          <input
+            className="job-form-input"
+            placeholder="Salary Min"
+            type="number"
+            name="salary_min"
+            value={jobForm.salary_min}
+            onChange={handleChange}
+            min="0"
+          />
+          <input
+            className="job-form-input"
+            placeholder="Salary Max"
+            type="number"
+            name="salary_max"
+            value={jobForm.salary_max}
+            onChange={handleChange}
+            min="0"
+          />
+        </div>
+
+        <div className="job-form-field-group">
+          <textarea
+            className="job-form-input job-form-textarea"
+            placeholder="Job Description"
+            rows={3}
+            name="description"
+            value={jobForm.description}
+            onChange={handleChange}
+          />
+        </div>
+
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition w-full"
+          className={`job-form-submit ${submitting ? "loading" : ""}`}
           disabled={submitting}
         >
-          {submitting ? "Adding..." : "Add Job"}
+          {submitting ? "Adding Job..." : "Add Job"}
         </button>
       </form>
     </div>

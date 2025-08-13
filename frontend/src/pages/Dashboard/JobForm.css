@@ -1,0 +1,320 @@
+/* Modal Overlay */
+.job-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 42, 51, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Form Container */
+.job-form-container {
+  background: var(--color-bg);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(30, 42, 51, 0.25),
+    0 0 0 1px var(--color-secondary);
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Close Button */
+.job-form-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--color-tertiary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.job-form-close:hover {
+  color: var(--color-text);
+  background: var(--color-accent);
+}
+
+/* Form Title */
+.job-form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-text);
+  text-align: center;
+  background: var(--color-tertiary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Form Field Container */
+.job-form-field-group {
+  margin-bottom: 1rem;
+}
+
+.job-form-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* Input Styles */
+.job-form-input {
+  width: 100%;
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: var(--color-main);
+  box-sizing: border-box;
+  color: var(--color-text);
+}
+
+.job-form-input:focus {
+  outline: none;
+  border-color: var(--color-tertiary);
+  background: var(--color-bg);
+  box-shadow: 0 0 0 3px rgba(95, 168, 211, 0.1),
+    0 1px 3px 0 rgba(30, 42, 51, 0.1);
+  transform: translateY(-1px);
+}
+
+.job-form-input::placeholder {
+  color: rgba(30, 42, 51, 0.6);
+  font-weight: 400;
+}
+
+/* Textarea Specific */
+.job-form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 120px;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+/* Submit Button */
+.job-form-submit {
+  width: 100%;
+  background: var(--color-tertiary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.job-form-submit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.job-form-submit:hover::before {
+  left: 100%;
+}
+
+.job-form-submit:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-tertiary)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(95, 168, 211, 0.4),
+    0 4px 6px -2px rgba(228, 87, 46, 0.05);
+}
+
+.job-form-submit:active {
+  transform: translateY(0);
+}
+
+.job-form-submit:disabled {
+  background: var(--color-secondary);
+  color: var(--color-text);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.job-form-submit:disabled::before {
+  display: none;
+}
+
+/* Loading State */
+.job-form-submit.loading {
+  color: transparent;
+}
+
+.job-form-submit.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .job-form-container {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border: 1px solid var(--color-secondary);
+  }
+
+  .job-form-title {
+    color: var(--color-tertiary);
+    background: linear-gradient(
+      135deg,
+      var(--color-tertiary),
+      var(--color-accent)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .job-form-input {
+    background: rgba(232, 241, 248, 0.1);
+    border-color: var(--color-secondary);
+    color: var(--color-bg);
+  }
+
+  .job-form-input:focus {
+    border-color: var(--color-tertiary);
+    background: rgba(232, 241, 248, 0.05);
+    box-shadow: 0 0 0 3px rgba(95, 168, 211, 0.2),
+      0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .job-form-input::placeholder {
+    color: rgba(253, 253, 252, 0.6);
+  }
+
+  .job-form-close:hover {
+    background: rgba(228, 87, 46, 0.1);
+    color: var(--color-accent);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .job-form-overlay {
+    padding: 0.5rem;
+  }
+
+  .job-form-container {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .job-form-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .job-form-field-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .job-form-input {
+    padding: 0.625rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .job-form-submit {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Accessibility Improvements */
+.job-form-input:invalid {
+  border-color: var(--color-accent);
+}
+
+.job-form-input:invalid:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(228, 87, 46, 0.1),
+    0 1px 3px 0 rgba(30, 42, 51, 0.1);
+}
+
+/* Focus visible for keyboard navigation */
+.job-form-close:focus-visible,
+.job-form-submit:focus-visible {
+  outline: 2px solid var(--color-tertiary);
+  outline-offset: 2px;
+}
