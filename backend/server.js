@@ -20,6 +20,7 @@ const io = socketIO(server, {
 
 //handle static files
 const path = require("path");
+const fs = require("fs");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Use port from env or 5000
@@ -147,6 +148,17 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/api', (req, res) => {
     res.send('Server is running in development mode!');
   });
+}
+
+// Optionally serve frontend build if present and enabled
+const frontendDistPath = path.join(__dirname, "..", "frontend", "dist");
+if (process.env.SERVE_FRONTEND === "true" && fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+} else {
+  console.log("Not serving frontend from backend (SERVE_FRONTEND not set or dist missing)");
 }
 
 //Connect to MongoDB
