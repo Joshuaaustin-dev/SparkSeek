@@ -1,34 +1,124 @@
 .resume-select {
   width: 100%;
-  padding: 10px 40px 10px 12px;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  border: 2px solid #007bff;
-  border-radius: 6px;
-  background-color: white;
-  color: #333;
+  padding: 1rem 3rem 1rem 1.25rem;
+  font-size: 1rem;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  border: 2px solid var(--color-secondary);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23007bff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%235fa8d3' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 1rem center;
   background-size: 20px 20px;
   cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 4px 15px rgba(94, 168, 211, 0.08);
 }
 
 .resume-select:hover {
-  border-color: #0056b3;
+  border-color: var(--color-tertiary);
+  background-color: rgba(232, 241, 248, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(94, 168, 211, 0.12);
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23e4572e' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
 }
 
 .resume-select:focus {
   outline: none;
-  border-color: #003d80;
-  box-shadow: 0 0 5px rgba(0, 61, 128, 0.5);
+  border-color: var(--color-tertiary);
+  background-color: var(--color-bg);
+  box-shadow: 0 0 0 4px rgba(94, 168, 211, 0.1),
+    0 8px 25px rgba(94, 168, 211, 0.15);
+  transform: translateY(-2px);
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%235fa8d3' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+}
+
+.resume-select:active {
+  transform: translateY(0);
 }
 
 .resume-select option {
-  padding: 8px;
-  font-size: 15px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  border-radius: 8px;
+}
+
+.resume-select option:hover,
+.resume-select option:checked {
+  background-color: var(--color-main);
+  color: var(--color-text);
+}
+
+/* Custom select wrapper for enhanced styling */
+.resume-select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.resume-select-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  background: linear-gradient(145deg, transparent, rgba(94, 168, 211, 0.05));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resume-select-wrapper:hover::before {
+  opacity: 1;
+}
+
+/* Loading state */
+.resume-select.loading {
+  background-image: url("data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='3' fill='%235fa8d3'><animate attributeName='r' values='3;8;3' dur='1s' repeatCount='indefinite'/><animate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/></circle></svg>");
+  cursor: wait;
+}
+
+/* Disabled state */
+.resume-select:disabled {
+  background-color: rgba(198, 223, 241, 0.3);
+  border-color: rgba(198, 223, 241, 0.5);
+  color: rgba(30, 42, 51, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.resume-select:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(198, 223, 241, 0.5);
+  background-color: rgba(198, 223, 241, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .resume-select {
+    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .resume-select {
+    padding: 0.75rem 2.25rem 0.75rem 0.875rem;
+    font-size: 0.9rem;
+    background-size: 18px 18px;
+    background-position: right 0.75rem center;
+  }
 }
