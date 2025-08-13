@@ -3,14 +3,14 @@
   max-width: 1200px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
-  background-color: #f7f9fc;
+  background-color: var(--color-bg);
   min-height: 100vh;
 }
 
 .jobs-title {
   font-size: 2rem;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text);
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -25,15 +25,17 @@
 .search-input {
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-secondary);
   font-size: 1rem;
   width: 60%;
   max-width: 400px;
+  background-color: var(--color-main);
+  color: var(--color-text);
 }
 
 .search-button {
   padding: 0.75rem 1.25rem;
-  background-color: #0077cc;
+  background-color: var(--color-tertiary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -42,7 +44,7 @@
 }
 
 .search-button:hover {
-  background-color: #005fa3;
+  background-color: var(--color-accent);
 }
 
 .jobs-grid {
@@ -56,7 +58,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: var(--color-bg);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -80,19 +82,20 @@
 .job-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #0077cc;
+  color: var(--color-tertiary);
 }
 
 .job-company {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--color-tertiary);
   margin-top: 0.5rem;
 }
 
 .job-location,
 .job-type {
   font-size: 0.85rem;
-  color: #777;
+  color: var(--color-text);
+  opacity: 0.7;
   margin-top: 0.25rem;
 }
 
@@ -101,19 +104,20 @@
   height: 40px;
   object-fit: contain;
   border-radius: 6px;
-  border: 1px solid #eee;
+  border: 1px solid var(--color-secondary);
   margin-left: 10px;
 }
 
 .jobs-error {
   text-align: center;
-  color: red;
+  color: var(--color-accent);
   margin-bottom: 1rem;
 }
 
 .jobs-end-message {
   text-align: center;
-  color: #888;
+  color: var(--color-text);
+  opacity: 0.7;
   margin-top: 2rem;
 }
 
@@ -121,7 +125,7 @@
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background-color: #1e293b;
+  background-color: var(--color-tertiary);
   color: white;
   border: none;
   border-radius: 50%;
@@ -133,7 +137,7 @@
 }
 
 .scroll-to-top:hover {
-  background-color: #334155;
+  background-color: var(--color-accent);
 }
 
 @media (max-width: 600px) {

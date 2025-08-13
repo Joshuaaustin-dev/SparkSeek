@@ -58,8 +58,8 @@
 
 .profile-edit-form .btn-primary:hover,
 .profile-edit-form .btn-primary:focus {
-  background-color: #d11414;
-  box-shadow: 0 6px 20px rgba(175, 30, 35, 0.8);
+  background-color: var(--color-accent);
+  box-shadow: 0 6px 20px rgba(228, 87, 46, 0.4);
   outline: none;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .profile-edit-form .error-message {
-  color: #f14545;
+  color: var(--color-accent);
   font-size: 0.9rem;
   margin-top: 0.25rem;
   font-weight: 600;
@@ -110,8 +110,8 @@
 }
 
 .skill-tag {
-  background-color: #e0e7ff;
-  color: #3730a3;
+  background-color: var(--color-main);
+  color: var(--color-tertiary);
   padding: 4px 8px;
   border-radius: 15px;
   font-size: 0.9rem;
@@ -122,7 +122,7 @@
 .btn-remove-skill {
   background: none;
   border: none;
-  color: #3730a3;
+  color: var(--color-tertiary);
   margin-left: 6px;
   font-weight: bold;
   cursor: pointer;
@@ -133,7 +133,7 @@
 }
 
 .btn-remove-skill:hover {
-  color: #c026d3;
+  color: var(--color-accent);
 }
 
 @media (max-width: 480px) {

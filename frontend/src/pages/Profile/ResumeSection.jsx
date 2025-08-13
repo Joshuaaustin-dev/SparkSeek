@@ -10,7 +10,7 @@ const ResumeSection = ({ skills = [] }) => (
       <a
         href="/resume"
         rel="noopener noreferrer"
-        className="text-blue-600 underline"
+        className="underline" style={{ color: 'var(--color-tertiary)' }}
       >
         View Resume
       </a>

@@ -27,7 +27,7 @@
 }
 
 .login-container {
-  background-color: #ffffff;
+  background-color: var(--color-bg);
   max-width: 400px;
   margin: 3rem auto;
   padding: 2rem 2.5rem;
@@ -90,7 +90,7 @@ select:focus {
 
 .card {
   padding: 2em;
-  background: #fff;
+  background: var(--color-bg);
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(64, 131, 155, 0.08);
   box-sizing: border-box;
@@ -99,11 +99,11 @@ select:focus {
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
-  background: #e5e7eb;
+  background: var(--color-main);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-secondary);
   border-radius: 4px;
 }
 

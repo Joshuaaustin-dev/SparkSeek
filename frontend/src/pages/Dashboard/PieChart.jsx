@@ -8,12 +8,12 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#AA336A",
-  "#8884d8",
+  getComputedStyle(document.documentElement).getPropertyValue('--color-tertiary')?.trim() || '#5fa8d3',
+  getComputedStyle(document.documentElement).getPropertyValue('--color-accent')?.trim() || '#e4572e',
+  getComputedStyle(document.documentElement).getPropertyValue('--color-secondary')?.trim() || '#c6dff1',
+  '#7cb6d9',
+  '#a8d1ea',
+  '#4f96c0',
 ];
 
 const renderCustomizedLabel = ({

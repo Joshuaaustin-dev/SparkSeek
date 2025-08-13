@@ -191,7 +191,7 @@
 
 .job-droppable {
   flex: 1;
-  background-color: #fafafa;
+  background-color: var(--color-main);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -203,25 +203,25 @@
 }
 
 .job-droppable.is-dragging-over {
-  background-color: #e0f7fa;
+  background-color: var(--color-secondary);
 }
 
 .job-empty {
   font-size: 0.9rem;
-  color: #777;
+  color: var(--color-tertiary);
   text-align: center;
   margin-top: 10px;
 }
 
 .job-draggable {
   user-select: none;
-  background-color: white;
+  background-color: var(--color-bg);
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .job-draggable.is-dragging {
-  background-color: #bbdefb;
+  background-color: var(--color-secondary);
 }
 
 /* Modal */
@@ -237,7 +237,7 @@
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: var(--color-bg);
   padding: 16px 20px;
   border-radius: 12px;
   width: min(90vw, 640px);
@@ -255,9 +255,9 @@
   cursor: pointer;
   border: none;
   background: none;
-  color: #6b7280;
+  color: var(--color-tertiary);
 }
 
 .modal-close-btn:hover {
-  color: #ef4444;
+  color: var(--color-accent);
 }

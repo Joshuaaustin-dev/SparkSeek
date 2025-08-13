@@ -1,6 +1,6 @@
 .profile-card {
   border-radius: 12px;
-  background-color: var(--color-background);
+  background-color: var(--color-bg);
   color: var(--color-text);
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
@@ -14,7 +14,7 @@
   width: 130px;
   height: 130px;
   object-fit: cover;
-  border: 4px solid var(--color-primary);
+  border: 4px solid var(--color-secondary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease;
 }
@@ -24,22 +24,22 @@
 }
 
 .profile-section {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-primary);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-secondary);
 }
 
 .profile-section h4 {
   font-weight: 700;
-  color: var(--color-secondary);
+  color: var(--color-text);
   border-color: var(--color-secondary);
 }
 
 .btn-edit-profile {
   font-weight: 600;
   border-radius: 8px;
-  background-color: var(--color-primary);
+  background-color: var(--color-tertiary);
   color: #fff;
-  box-shadow: 0 4px 12px var(--color-primary);
+  box-shadow: 0 4px 12px var(--color-secondary);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 

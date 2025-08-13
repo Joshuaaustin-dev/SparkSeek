@@ -49,7 +49,7 @@ const Signup = () => {
         <div
           className={`login-message ${hasError ? "error" : "success"}`}
           style={{
-            color: hasError ? "red" : "green",
+            color: hasError ? "var(--color-accent)" : "var(--color-tertiary)",
             marginBottom: "1rem",
             fontWeight: "bold",
           }}
@@ -104,7 +104,7 @@ const Signup = () => {
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="mt-6 w-full border border-blue-600 text-blue-600 font-semibold py-2 rounded-md hover:bg-blue-50 transition-colors"
+          className="mt-6 w-full font-semibold py-2 rounded-md transition-colors" style={{ border: '1px solid var(--color-tertiary)', color: 'var(--color-tertiary)' }}
         >
           Back to Login
         </button>

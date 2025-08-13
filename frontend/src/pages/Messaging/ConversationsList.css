@@ -41,7 +41,7 @@
 }
 
 .new-conversation-btn:hover {
-  background: #d4441f;
+  background: var(--color-accent);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(228, 87, 46, 0.4);
 }
@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   padding: 1.25rem;
-  background: white;
+  background: var(--color-bg);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -75,7 +75,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(95, 168, 211, 0.15);
   border-color: var(--color-tertiary);
-  background: linear-gradient(135deg, white 0%, var(--color-main) 100%);
+  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-main) 100%);
 }
 
 .conversation-item::before {
@@ -186,7 +186,7 @@
 .last-message {
   margin: 0;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--color-tertiary);
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -264,7 +264,7 @@
 }
 
 .start-conversation-btn:hover {
-  background: #4f96c0;
+  background: var(--color-tertiary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(95, 168, 211, 0.4);
 }
@@ -278,7 +278,7 @@
   justify-content: center;
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
+  background: var(--color-bg);
   border-radius: 20px;
   box-shadow: 0 4px 16px rgba(30, 42, 51, 0.1);
 }

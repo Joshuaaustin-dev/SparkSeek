@@ -64,7 +64,7 @@ function AppWrapper() {
         {isAuthenticated && !["/", "/signup"].includes(location.pathname) && (
           <NavigationMenu />
         )}
-        <div className="bg-blue-300 mt-5 p-4">
+        <div className="mt-5 p-4" style={{ backgroundColor: 'var(--color-main)' }}>
           <Routes>
             <Route
               path="/"

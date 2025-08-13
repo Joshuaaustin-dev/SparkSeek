@@ -52,7 +52,7 @@ const Login = ({ onLogin }) => {
         <div
           className={`login-message ${hasError ? "error" : "success"}`}
           style={{
-            color: hasError ? "red" : "green",
+            color: hasError ? "var(--color-accent)" : "var(--color-tertiary)",
             marginBottom: "1rem",
             fontWeight: "bold",
           }}

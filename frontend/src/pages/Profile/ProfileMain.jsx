@@ -92,7 +92,7 @@ const ProfileMain = () => {
               </div>
 
               {/* Sections */}
-              <div className="profile-section p-4 rounded mb-4 shadow-sm bg-white border">
+              <div className="profile-section p-4 rounded mb-4 shadow-sm border">
                 <h4 className="mb-4 border-bottom pb-2">About</h4>
                 {user.role === "seeker" ? (
                   <JobSeekerDetails bio={user.bio} setBio={() => {}} />
@@ -101,7 +101,7 @@ const ProfileMain = () => {
                 )}
               </div>
 
-              <div className="profile-section p-4 rounded mb-4 shadow-sm bg-white border">
+              <div className="profile-section p-4 rounded mb-4 shadow-sm border">
                 <ResumeSection skills={skills} resumeUrl={resumeUrl} />
               </div>
 

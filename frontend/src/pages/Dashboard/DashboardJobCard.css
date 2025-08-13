@@ -288,17 +288,17 @@
 }
 
 .job-btn-danger:hover:not(:disabled) {
-  background: #c73e1d;
+  background: var(--color-accent);
   transform: translateY(-1px);
 }
 
 .job-btn-edit {
-  background: #f59e0b;
+  background: var(--color-accent);
   color: white;
 }
 
 .job-btn-edit:hover:not(:disabled) {
-  background: #d97706;
+  background: var(--color-accent);
   transform: translateY(-1px);
 }
 
