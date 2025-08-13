@@ -20,6 +20,7 @@ const io = socketIO(server, {
 
 //handle static files
 const path = require("path");
+const fs = require("fs");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Use port from env or 5000
@@ -77,7 +78,7 @@ io.on('connection', (socket) => {
       }
       
       // Confirm message sent to sender
-      socket.emit('messageSent', { success: true });
+  socket.emit('messageSent', { success: true });
       
     } catch (error) {
       socket.emit('messageError', { error: 'Failed to send message' });
@@ -132,6 +133,17 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/inspiration', inspirationalVideosRoutes);
+
+// Optionally serve frontend build if present and enabled
+const frontendDistPath = path.join(__dirname, "..", "frontend", "dist");
+if (process.env.SERVE_FRONTEND === "true" && fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+} else {
+  console.log("Not serving frontend from backend (SERVE_FRONTEND not set or dist missing)");
+}
 
 //Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
