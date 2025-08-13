@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-// Import the stylesheet
 import "./JobForm.css";
 
 const initialState = {

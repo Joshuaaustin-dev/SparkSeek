@@ -75,7 +75,7 @@ const DATE_POSTED_OPTIONS = [
 ];
 
 const JobCardSkeleton = () => (
-  <div className="job-card skeleton">
+  <div className="job-card-api skeleton">
     <div className="skeleton-title shimmer" />
     <div className="skeleton-company shimmer" />
     <div className="skeleton-logo shimmer" />
@@ -241,7 +241,7 @@ function Jobs() {
           jobs.map((job, index) => (
             <div
               key={job.id}
-              className="job-card"
+              className="job-card-api"
               onClick={() => handleJobClick(job.id)}
               role="button"
               tabIndex={0}

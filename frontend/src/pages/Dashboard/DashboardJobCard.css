@@ -1,14 +1,14 @@
 .job-card {
   background: var(--color-bg);
   border: 1px solid var(--color-secondary);
-  border-radius: 8px;
-  padding: 0.75rem;
-  cursor: pointer;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  min-width: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .job-card:hover {
@@ -264,7 +264,7 @@
 
 .job-btn-primary {
   background: var(--color-tertiary);
-  color: white;
+  color: var(--color-secondary);
 }
 
 .job-btn-primary:hover:not(:disabled) {
@@ -284,21 +284,21 @@
 
 .job-btn-danger {
   background: var(--color-accent);
-  color: white;
+  color: var(--color-secondary);
 }
 
 .job-btn-danger:hover:not(:disabled) {
-  background: #c73e1d;
+  background: color-mix(in srgb, var(--color-accent) 85%, black);
   transform: translateY(-1px);
 }
 
 .job-btn-edit {
-  background: #f59e0b;
-  color: white;
+  background: color-mix(in srgb, var(--color-tertiary) 70%, gold);
+  color: var(--color-bg);
 }
 
 .job-btn-edit:hover:not(:disabled) {
-  background: #d97706;
+  background: color-mix(in srgb, var(--color-tertiary) 60%, black);
   transform: translateY(-1px);
 }
 
@@ -323,23 +323,6 @@
 .job-details-links a:hover {
   color: var(--color-accent);
   text-decoration: underline;
-}
-
-/* Dark Mode Enhancements */
-[data-theme="dark"] .job-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .job-card:hover {
-  box-shadow: 0 4px 12px rgba(63, 140, 165, 0.3);
-}
-
-[data-theme="dark"] .modal-overlay {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-[data-theme="dark"] .job-description-display {
-  background: var(--color-secondary);
 }
 
 /* Mobile Responsiveness */

@@ -185,7 +185,7 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
   };
 
   return (
-    <div className="profile-card card shadow-sm">
+    <div className="custom-card">
       <div className="card-body">
         <h3 className="mb-4 fw-bold text-primary">Edit Profile</h3>
         <form
@@ -342,7 +342,7 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn-secondary-custom"
                   onClick={onCancel}
                 >
                   Cancel

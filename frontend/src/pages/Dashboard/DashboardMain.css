@@ -189,23 +189,6 @@
   border-radius: 9999px;
 }
 
-.job-droppable {
-  flex: 1;
-  background-color: #fafafa;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  padding-right: 4px;
-  min-height: 300px;
-  transition: background-color 0.2s ease;
-}
-
-.job-droppable.is-dragging-over {
-  background-color: #e0f7fa;
-}
-
 .job-empty {
   font-size: 0.9rem;
   color: #777;
