@@ -133,14 +133,14 @@ app.use('/api/resumes', resumeRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/inspiration', inspirationalVideosRoutes);
 
-// === PRODUCTION SETUP FOR REACT BUILD ===
+// === PRODUCTION SETUP FOR VITE BUILD ===
 if (process.env.NODE_ENV === 'production') {
-  // Serve static files from React build
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  // Serve static files from Vite build (dist folder)
+  app.use(express.static(path.join(__dirname, '../client/dist')));
   
   // Handle React Router - send all non-API requests to React
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
 } else {
   // Development route
