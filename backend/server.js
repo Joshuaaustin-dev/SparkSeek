@@ -13,7 +13,7 @@ const server = http.createServer(app);
 // Socket.IO setup with CORS
 const io = socketIO(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,// Adjust for your frontend URL
+    origin: process.env.FRONTEND_URL || "*", // Allow all origins in development
     methods: ["GET", "POST"]
   }
 });
@@ -133,6 +133,22 @@ app.use('/api/resumes', resumeRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/inspiration', inspirationalVideosRoutes);
 
+// === PRODUCTION SETUP FOR REACT BUILD ===
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from React build
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  
+  // Handle React Router - send all non-API requests to React
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  });
+} else {
+  // Development route
+  app.get('/api', (req, res) => {
+    res.send('Server is running in development mode!');
+  });
+}
+
 //Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('MongoDB connected successfully!'))
@@ -140,12 +156,6 @@ mongoose.connect(process.env.MONGO_URI, {
     console.error('MongoDB connection error:', err);
     process.exit(1);
 })
-
-//Route for GET requests defined in root URL '/'
-// When root is visited message will send
-app.get('/api', (req, res) => {
-    res.send('Server is running!');
-});
 
 //Start the express server listening on PORT 5000
 server.listen(PORT, () => {
