@@ -3,14 +3,10 @@
   "version": "1.0.0",
   "description": "MERN stack chat application",
   "scripts": {
-    "build": "cd client && npm install && npm run build",
-    "start": "cd server && node server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm run dev",
-    "client": "cd client && npm start",
-    "install-server": "cd server && npm install",
-    "install-client": "cd client && npm install",
-    "install-all": "npm run install-server && npm run install-client"
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && node server.js",
+    "build-client": "cd client && npm install && npm run build",
+    "start-server": "cd server && node server.js"
   },
   "keywords": ["mern", "chat", "socket.io"],
   "author": "Your Name",
