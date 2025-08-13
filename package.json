@@ -5,8 +5,12 @@
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
     "start": "cd backend && node server.js",
-    "build-client": "cd client && npm install && npm run build",
-    "start-server": "cd server && node server.js"
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "install-server": "cd backend && npm install",
+    "install-client": "cd frontend && npm install",
+    "install-all": "npm run install-server && npm run install-client"
   },
   "keywords": ["mern", "chat", "socket.io"],
   "author": "Your Name",
